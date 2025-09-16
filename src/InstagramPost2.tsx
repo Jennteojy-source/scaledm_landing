@@ -10,10 +10,10 @@ const InstagramPost2: React.FC = () => {
   ], []);
   const keyword = useMemo(() => 'NEED', []);
   const replyVariants = useMemo(() => [
-    'Got you! Check your inbox — if not, peep message requests.',
-    'Just sent it over. If you don’t see it, check requests.',
-    'DM sent! It may land in your requests folder.',
-    'All set — info sent. Look in message requests if needed.',
+    "I DM’d you the promo codes and product links. Check your inbox.",
+    "Just DM’d you all promo codes + product links — check your inbox.",
+    "Sent a DM with the promo codes and Amazon links. Please check inbox.",
+    "I’ve sent the promo codes and product links via DM. Check inbox.",
   ], []);
 
   useEffect(() => {
@@ -31,8 +31,8 @@ const InstagramPost2: React.FC = () => {
   }, [step, commenters.length]);
 
   return (
-    <div className="w-full h-screen overflow-hidden flex items-center justify-center p-3">
-      <div className="w-full max-w-[1080px] aspect-square bg-white rounded-2xl shadow border border-neutral-200 overflow-hidden flex flex-col">
+    <div className="w-full flex justify-center px-3">
+      <div className="max-w-[680px] w-full bg-white rounded-2xl shadow border border-neutral-200 overflow-hidden flex flex-col h-[860px] sm:h-[920px] md:h-[1000px] min-h-0">
 
         {/* Post header */}
         <div className="px-4 py-3 flex items-center gap-3">
@@ -44,10 +44,8 @@ const InstagramPost2: React.FC = () => {
         </div>
 
         {/* Media */}
-        <div className="w-full bg-white">
-          <div className="w-full aspect-[4/3]">
-            <img src="/amazon.png" alt="post" className="w-full h-full object-contain" loading="lazy" />
-          </div>
+        <div className="w-full h-[160px] sm:h-[200px] md:h-[240px] bg-white">
+          <img src="/amazon.png" alt="post" className="w-full h-full object-contain" loading="lazy" />
         </div>
 
         {/* Actions under media */}
@@ -69,7 +67,7 @@ const InstagramPost2: React.FC = () => {
         </div>
 
         {/* Comments thread */}
-        <div className="px-4 pb-4 text-sm flex-1 overflow-hidden">
+        <div className="px-4 pb-4 text-sm flex-1 overflow-visible">
           {commenters.map((c, i) => {
             const commentStep = i * 2 + 1; // when comment becomes visible
             const replyStep = i * 2 + 2;   // when reply becomes visible

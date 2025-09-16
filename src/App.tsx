@@ -10,21 +10,24 @@ import InstagramPost2 from './InstagramPost2';
 const App: React.FC = () => {
   return (
     <Router>
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'flex-start', 
-        paddingTop: '20px',
-        background: '#f5f5f5'
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100vw',
+        height: '100vh',
+        overflow: 'hidden'
       }}>
-        <Routes>
-          <Route path="/" element={<AdLanding />} />
-          <Route path="/916" element={<AdLanding916 />} />
-          <Route path="/animation" element={<Animation />} />
-          <Route path="/features" element={<FeaturesPage />} />
-          <Route path="/ig-post" element={<InstagramPost />} />
-          <Route path="/ig-post-2" element={<InstagramPost2 />} />
-        </Routes>
+        <div style={{ width: 'min(100vw, 100vh)', height: 'min(100vw, 100vh)' }}>
+          <Routes>
+            <Route path="/" element={<AdLanding />} />
+            <Route path="/916" element={<AdLanding916 />} />
+            <Route path="/animation" element={<Animation />} />
+            <Route path="/features" element={<FeaturesPage />} />
+            <Route path="/ig-post" element={<InstagramPost />} />
+            <Route path="/ig-post-2" element={<InstagramPost2 />} />
+          </Routes>
+        </div>
       </div>
     </Router>
   );
