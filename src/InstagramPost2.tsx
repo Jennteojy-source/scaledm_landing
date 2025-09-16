@@ -9,6 +9,12 @@ const InstagramPost2: React.FC = () => {
     { user: 'diana.nelson.7127', text: 'Need', avatar: '/user3.png' },
   ], []);
   const keyword = useMemo(() => 'NEED', []);
+  const replyVariants = useMemo(() => [
+    'Got you! Check your inbox — if not, peep message requests.',
+    'Just sent it over. If you don’t see it, check requests.',
+    'DM sent! It may land in your requests folder.',
+    'All set — info sent. Look in message requests if needed.',
+  ], []);
 
   useEffect(() => {
     const totalSteps = commenters.length * 2;
@@ -25,8 +31,8 @@ const InstagramPost2: React.FC = () => {
   }, [step, commenters.length]);
 
   return (
-    <div className="w-full flex justify-center px-3 pb-10">
-      <div className="max-w-[680px] w-full bg-white rounded-2xl shadow border border-neutral-200 overflow-hidden flex flex-col h-[820px]">
+    <div className="w-full h-screen overflow-hidden flex items-center justify-center p-3">
+      <div className="w-full max-w-[1080px] aspect-square bg-white rounded-2xl shadow border border-neutral-200 overflow-hidden flex flex-col">
 
         {/* Post header */}
         <div className="px-4 py-3 flex items-center gap-3">
@@ -37,13 +43,15 @@ const InstagramPost2: React.FC = () => {
           <div className="ml-auto text-neutral-500">•••</div>
         </div>
 
-        {/* Caption area (no media) */}
-        <div className="w-full px-4 pt-2 pb-4">
-          <p className="text-sm"><span className="font-semibold">bestdailydeals</span> Amazon deals on stuff you actually need!</p>
-          <p className="text-sm mt-3">Comment <span className="font-bold">NEED</span> and I’ll DM you all the promo codes and Amazon product links.</p>
-          <p className="text-sky-500 text-sm mt-3">#amazondeals #deals</p>
-          <p className="text-neutral-400 text-xs mt-2">14h</p>
+        {/* Media */}
+        <div className="w-full bg-white">
+          <div className="w-full aspect-[4/3]">
+            <img src="/amazon.png" alt="post" className="w-full h-full object-contain" loading="lazy" />
+          </div>
         </div>
+
+        {/* Actions under media */}
+        
 
         {/* Actions */}
         <div className="px-4 py-3 flex items-center gap-4 text-neutral-800">
@@ -53,17 +61,15 @@ const InstagramPost2: React.FC = () => {
           <div className="ml-auto"><IconSave /></div>
         </div>
 
-        {/* Caption */}
+        {/* Likes + Caption */}
         <div className="px-4 pb-2 text-sm">
           <p className="font-semibold">1,058 likes</p>
-          <p className="mt-1">
-            <span className="font-semibold">bestdailydeals</span> Comment <span className="font-bold">NEED</span> and I’ll DM you all the promo codes and links.
-          </p>
-          <p className="text-sky-500 mt-1">#amazondeals #deals #amazoncodes</p>
+          <p className="mt-1"><span className="font-semibold">bestdailydeals</span> Amazon deals on stuff you actually need!</p>
+          <p className="mt-1">Comment <span className="font-bold">NEED</span> and I’ll DM you all the promo codes and Amazon product links.</p>
         </div>
 
         {/* Comments thread */}
-        <div className="px-4 pb-4 text-sm flex-1 overflow-visible">
+        <div className="px-4 pb-4 text-sm flex-1 overflow-hidden">
           {commenters.map((c, i) => {
             const commentStep = i * 2 + 1; // when comment becomes visible
             const replyStep = i * 2 + 2;   // when reply becomes visible
@@ -93,7 +99,7 @@ const InstagramPost2: React.FC = () => {
                       <div className="flex items-start gap-2">
                         <img src="/business.png" alt="profile" className="w-7 h-7 rounded-full object-cover" />
                         <div>
-                          <p className="text-neutral-800"><span className="font-semibold">bestdailydeals</span> <span className="text-sky-600">@{c.user}</span> Sent! Check your message requests if you don’t see it.</p>
+                          <p className="text-neutral-800"><span className="font-semibold">bestdailydeals</span> <span className="text-sky-600">@{c.user}</span> {replyVariants[i % replyVariants.length]}</p>
                           <div className="flex items-center gap-3 text-xs text-neutral-500 mt-1">
                             <span>14h</span>
                             <span>Reply</span>
