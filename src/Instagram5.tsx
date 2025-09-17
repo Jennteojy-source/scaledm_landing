@@ -249,7 +249,7 @@ const useDemoAnimation = () => {
   }, [state.phase, state.iteration, addTimeout, updateState, startComments]);
 
   useEffect(() => {
-    // Animation will only start manually via controller
+    // Manual start only - no auto-start
     return () => {
       clearAllAnimations();
     };
@@ -508,18 +508,16 @@ const ScaleDMUpsellOverlay: React.FC<{
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.3 }}
+        transition={{ duration: 0.25 }}
         sx={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          zIndex: 9999,
+          position: "absolute",
+          inset: 0,
+          zIndex: 50,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          p: 3,
+          p: 2,
+          borderRadius: "inherit",
           ...HARDWARE_ACCELERATION_STYLES
         }}
         className="bg-black/60"
@@ -530,13 +528,13 @@ const ScaleDMUpsellOverlay: React.FC<{
           initial={{ scale: 0.98, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.98, opacity: 0 }}
-          transition={{ duration: 0.35 }}
+          transition={{ duration: 0.25 }}
           onClick={(e) => e.stopPropagation()}
           sx={{
             position: "relative",
             ...HARDWARE_ACCELERATION_STYLES
           }}
-          className="bg-white rounded-2xl shadow-2xl px-6 py-8 sm:px-8 sm:py-10 max-w-md w-[92%] sm:w-full text-center"
+          className="bg-white rounded-2xl shadow-2xl px-5 py-6 sm:px-6 sm:py-7 w-[92%] text-center"
         >
           <Box 
             sx={{ 
@@ -552,13 +550,13 @@ const ScaleDMUpsellOverlay: React.FC<{
 
           {/* Primary message first */}
           <Typography 
-            variant="h5"
+            variant="h6"
             sx={{ 
-              fontWeight: 900, 
-              mb: 2, 
+              fontWeight: 800, 
+              mb: 1.5, 
               letterSpacing: -0.2,
               color: "#1a1a1a",
-              fontSize: { xs: "1.4rem", sm: "1.6rem" }
+              fontSize: { xs: "1.05rem", sm: "1.1rem" }
             }}
           >
             Auto send DM to anyone who engages with your content
@@ -569,7 +567,7 @@ const ScaleDMUpsellOverlay: React.FC<{
               component="img" 
               src="/logo.svg" 
               alt="ScaleDM Logo"
-              sx={{ height: 22, width: "auto" }}
+              sx={{ height: 18, width: "auto" }}
               className="drop-shadow-sm"
             />
             <Typography 
@@ -577,9 +575,9 @@ const ScaleDMUpsellOverlay: React.FC<{
               sx={{ 
                 fontWeight: 700,
                 textTransform: "uppercase",
-                letterSpacing: 1,
+                letterSpacing: 0.6,
                 color: "#6b7280",
-                fontSize: "0.75rem"
+                fontSize: "0.7rem"
               }}
             >
               Powered by ScaleDM
@@ -635,16 +633,35 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
         boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
       }}>
         <button
+          onClick={startComments}
+          disabled={state.phase !== "idle"}
+          style={{
+            padding: "6px 12px",
+            backgroundColor: state.phase === "idle" ? "#28a745" : "#6c757d",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: state.phase === "idle" ? "pointer" : "not-allowed",
+            fontSize: "12px",
+            fontWeight: "bold",
+            opacity: state.phase === "idle" ? 1 : 0.6
+          }}
+        >
+          ▶ Start
+        </button>
+        <button
           onClick={togglePause}
+          disabled={state.phase === "idle"}
           style={{
             padding: "6px 12px",
             backgroundColor: isPaused ? "#28a745" : "#ffc107",
             color: "white",
             border: "none",
             borderRadius: "4px",
-            cursor: "pointer",
+            cursor: state.phase !== "idle" ? "pointer" : "not-allowed",
             fontSize: "12px",
-            fontWeight: "bold"
+            fontWeight: "bold",
+            opacity: state.phase !== "idle" ? 1 : 0.6
           }}
         >
           {isPaused ? "▶ Resume" : "⏸ Pause"}
@@ -667,11 +684,8 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
       </Box>
       {/* Fixed 4:5 ratio: larger dimensions for demo */}
           <Box sx={{ 
-            width: { xs: '375px', sm: '480px' }, 
-            height: { xs: '469px', sm: '600px' }, 
-            maxWidth: '480px',
-            maxHeight: '600px',
-            aspectRatio: '4/5',
+            width: '360px',
+            height: '640px',
             display: 'flex',
             margin: 'auto',
             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
@@ -1090,13 +1104,12 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
           )}
         </AnimatePresence>
         </Box>
+        {/* ScaleDM Upsell Overlay (inside frame) */}
+        <ScaleDMUpsellOverlay 
+          show={state.showScaleDMUpsell} 
+          onClose={() => updateState({ showScaleDMUpsell: false })} 
+        />
       </Box>
-      
-      {/* ScaleDM Upsell Overlay */}
-      <ScaleDMUpsellOverlay 
-        show={state.showScaleDMUpsell} 
-        onClose={() => updateState({ showScaleDMUpsell: false })} 
-      />
     </Box>
   );
 };
