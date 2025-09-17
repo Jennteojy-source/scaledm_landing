@@ -10,30 +10,38 @@ interface InstagramInteractionDemoProps {
 }
 
 const ANIMATION_TIMINGS = {
-  AUTO_START_DELAY: 2000,
-  TAP_ANIMATION_DURATION: 280,  // iOS tap feedback duration
-  SHEET_OPEN_DELAY: 150,  // Faster sheet response
-  TYPING_START_DELAY: 800,  // More natural typing delay
-  TYPING_CHAR_DELAY: 85,  // Realistic typing speed
-  FADE_OUT_DELAY: 400,
-  SUBMITTED_DELAY: 600,
-  NOTIFICATION_DELAY: 800,  // Faster notification
-  NOTIFICATION_DURATION: 2800,
-  NOTIFICATION_CLICK_DELAY: 600,
-  DM_PULSE_DELAY: 1800,
-  DM_PULSE_DURATION: 1000,
-  DM_CLICK_FLASH_DELAY: 800,
-  DM_CLICK_FLASH_DURATION: 250,
-  WEBSITE_OPEN_DELAY: 600,
-  WEBSITE_DISPLAY_DURATION: 4000,
-  RESTART_DELAY: 1200,
+  AUTO_START_DELAY: 2200,
+  TAP_ANIMATION_DURATION: 320,  // iOS tap feedback duration
+  SHEET_OPEN_DELAY: 180,  // Slightly slower sheet response
+  TYPING_START_DELAY: 900,  // More natural typing delay
+  TYPING_CHAR_DELAY: 100,  // Slightly slower typing speed
+  FADE_OUT_DELAY: 550,
+  SUBMITTED_DELAY: 800,
+  NOTIFICATION_DELAY: 1000,  // Slightly later notification
+  NOTIFICATION_DURATION: 3500,
+  NOTIFICATION_CLICK_DELAY: 750,
+  // Notification should appear after the comment visibly renders
+  COMMENT_APPEAR_DELAY: 200,
+  COMMENT_APPEAR_ANIM_DURATION: 350,
+  NOTIFICATION_AFTER_COMMENT_DELAY: 900,
+  DM_PULSE_DELAY: 2200,
+  DM_PULSE_DURATION: 1200,
+  DM_CLICK_FLASH_DELAY: 900,
+  DM_CLICK_FLASH_DURATION: 300,
+  WEBSITE_OPEN_DELAY: 800,
+  WEBSITE_DISPLAY_DURATION: 5200,
+  RESTART_DELAY: 1600,
 } as const;
 
 const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 const MOBILE_ANIMATION_TIMINGS = {
   ...ANIMATION_TIMINGS,
-  TYPING_CHAR_DELAY: isMobile ? 75 : 85,  // Faster, more natural typing
-  TAP_ANIMATION_DURATION: isMobile ? 240 : 280,  // iOS haptic feedback timing
+  TYPING_CHAR_DELAY: isMobile 
+    ? Math.max(ANIMATION_TIMINGS.TYPING_CHAR_DELAY - 10, 70)
+    : ANIMATION_TIMINGS.TYPING_CHAR_DELAY,
+  TAP_ANIMATION_DURATION: isMobile 
+    ? Math.max(ANIMATION_TIMINGS.TAP_ANIMATION_DURATION - 40, 180)
+    : ANIMATION_TIMINGS.TAP_ANIMATION_DURATION,
 };
 
 const prefersReducedMotion = typeof window !== 'undefined' && 
@@ -203,17 +211,22 @@ const useDemoAnimation = () => {
 
   const handleNotification = useCallback(() => {
     if (state.phase !== "submitted") return;
-    // Coordinated timing for smooth flow
-    addTimeout(() => updateState({ showNotification: true }), ANIMATION_TIMINGS.NOTIFICATION_DELAY);
+    // Show notification only after the comment has appeared and animated in, plus a buffer
+    const afterCommentDelay = 
+      ANIMATION_TIMINGS.COMMENT_APPEAR_DELAY +
+      ANIMATION_TIMINGS.COMMENT_APPEAR_ANIM_DURATION +
+      ANIMATION_TIMINGS.NOTIFICATION_AFTER_COMMENT_DELAY;
+
+    addTimeout(() => updateState({ showNotification: true }), afterCommentDelay);
     addTimeout(() => {
       updateState({ notificationTapAnim: true });
-    }, ANIMATION_TIMINGS.NOTIFICATION_DELAY + ANIMATION_TIMINGS.NOTIFICATION_DURATION);
+    }, afterCommentDelay + ANIMATION_TIMINGS.NOTIFICATION_DURATION);
     addTimeout(() => {
       updateState({ showNotification: false, notificationTapAnim: false });
       addTimeout(() => {
         updateState({ phase: "dm" });
       }, 100);
-    }, ANIMATION_TIMINGS.NOTIFICATION_DELAY + ANIMATION_TIMINGS.NOTIFICATION_DURATION + ANIMATION_TIMINGS.NOTIFICATION_CLICK_DELAY);
+    }, afterCommentDelay + ANIMATION_TIMINGS.NOTIFICATION_DURATION + ANIMATION_TIMINGS.NOTIFICATION_CLICK_DELAY);
   }, [state.phase, addTimeout, updateState]);
 
   const handleDmPhase = useCallback(() => {
@@ -409,14 +422,14 @@ const CommentsPanel: React.FC<{
             <Typography variant="h6" align="center" sx={{ fontWeight: 700, mb: 1.5 }}>Comments</Typography>
             <AnimatePresence>
               {phase === "submitted" && (
-                <Box 
+                  <Box 
                   component={motion.div} 
                   initial={{ opacity: 0, y: 6 }} 
                   animate={{ 
                     opacity: 1, 
                     y: 0,
                     transition: {
-                      delay: ANIMATION_TIMINGS.NOTIFICATION_DELAY / 1000 - 0.2,
+                      delay: ANIMATION_TIMINGS.COMMENT_APPEAR_DELAY / 1000,
                       ...IOS_SPRING_SOFT
                     }
                   }} 
@@ -824,7 +837,7 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
                         overflow: "hidden",
                         cursor: "default"
                       }}>
-                        <Box component="img" src="/dress.png" alt="Recipe" sx={{ 
+                        <Box component="img" src="/dress.png" alt="Sky-Blue Satin Evening Dress" sx={{ 
                           width: "100%", 
                           height: { xs: 140, sm: 170 },
                           objectFit: "cover",
@@ -840,7 +853,7 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
                             color: "text.primary",
                             textAlign: "left"
                           }}>
-                            Oatmeal Peach Bake
+                            Sky-Blue Satin Evening Dress
                           </Typography>
                           <Typography variant="body2" sx={{ 
                             fontSize: 13, 
@@ -850,7 +863,7 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
                             display: "block",
                             textAlign: "left"
                           }}>
-                            A healthy and satisfying bowl of baked oatmeal topped with warm, spiced peaches.
+                            A sleek sky-blue satin dress with a timeless silhouette—effortlessly elegant for weddings, galas, and nights out.
                           </Typography>
                         </Box>
                         <Box sx={{ position: "relative", display: "flex", justifyContent: "center", width: "100%", p: { xs: 1, sm: 1.5 } }}>
@@ -930,7 +943,7 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
                     </Box>
                     <Box sx={{ flex: 1, overflow: "hidden", bgcolor: "#fafafa" }}>
                       <Box sx={{ bgcolor: "#f5f5f0", px: 2, py: 0.25, display: "flex", alignItems: "center", gap: 1 }}>
-                        <Typography variant="body2" sx={{ fontWeight: 600, color: "#333", fontSize: "0.6rem" }}>New recipes weekly!</Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 600, color: "#333", fontSize: "0.6rem" }}>New drops weekly!</Typography>
                         <Box sx={{ ml: "auto" }}>→</Box>
                       </Box>
                       <Box sx={{ bgcolor: "#f5f5f0", px: 2, py: 0.5, borderBottom: "1px solid #e0e0e0" }}>
@@ -942,20 +955,20 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
                         </Box>
                       </Box>
                       <Box sx={{ px: 2, py: 0.15, bgcolor: "white", borderBottom: "1px solid #e0e0e0" }}>
-                        <Typography variant="caption" sx={{ color: "#666", fontSize: "0.6rem" }}>{"BREAKFAST > "}<u>OATMEAL</u></Typography>
+                        <Typography variant="caption" sx={{ color: "#666", fontSize: "0.6rem" }}>{"FASHION > "}<u>EVENING DRESSES</u></Typography>
                       </Box>
                       <Box sx={{ px: 2, py: 1.5, bgcolor: "white" }}>
-                        <Typography variant="h3" sx={{ fontWeight: 900, color: "#000", mb: 1.5, fontSize: "1.3rem" }}>Oatmeal Peach Bake</Typography>
+                        <Typography variant="h3" sx={{ fontWeight: 900, color: "#000", mb: 1.5, fontSize: "1.3rem" }}>Sky-Blue Satin Evening Dress</Typography>
                         <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
-                          <Avatar src="/animation_profile.png" alt="fitfoodie_life business profile" sx={{ width: 24, height: 24 }} />
-                          <Typography variant="body2" sx={{ fontWeight: 700, fontSize: "0.8rem" }}>By <strong>FITFOODIE LIFE</strong></Typography>
+                          <Avatar src="/animation_profile.png" alt="stylebysarah business profile" sx={{ width: 24, height: 24 }} />
+                          <Typography variant="body2" sx={{ fontWeight: 700, fontSize: "0.8rem" }}>By <strong>STYLE BY SARAH</strong></Typography>
                           <Box sx={{ ml: "auto", display: "flex", gap: 1, alignItems: "center" }}>
                             <Typography variant="caption" sx={{ fontSize: "0.65rem" }}>⭐ 4.8</Typography>
                             <Typography variant="caption" sx={{ fontSize: "0.65rem" }}>💬 127</Typography>
                           </Box>
                         </Box>
                         <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
-                          <Box sx={{ px: 1.5, py: 0.75, bgcolor: "#000", color: "white", borderRadius: 1, fontWeight: 700, fontSize: "0.75rem" }}>JUMP TO RECIPE</Box>
+                          <Box sx={{ px: 1.5, py: 0.75, bgcolor: "#000", color: "white", borderRadius: 1, fontWeight: 700, fontSize: "0.75rem" }}>SHOP NOW</Box>
                           <Box sx={{ display: "flex", gap: 0.5 }}>
                             <Box sx={{ width: 20, height: 20, borderRadius: "50%", bgcolor: "#ddd", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.6rem" }}>P</Box>
                             <Box sx={{ width: 20, height: 20, borderRadius: "50%", bgcolor: "#ddd", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.6rem" }}>♡</Box>
@@ -963,20 +976,20 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
                           </Box>
                         </Box>
                         <Box sx={{ display: "flex", gap: 0.5, mb: 1 }}>
-                          <Box sx={{ px: 0.75, py: 0.25, bgcolor: "#8B4513", color: "white", borderRadius: 2, fontSize: "0.55rem", fontWeight: 700 }}>GF</Box>
-                          <Box sx={{ px: 0.75, py: 0.25, bgcolor: "#FF8C00", color: "white", borderRadius: 2, fontSize: "0.55rem", fontWeight: 700 }}>DF</Box>
-                          <Box sx={{ px: 0.75, py: 0.25, bgcolor: "#228B22", color: "white", borderRadius: 2, fontSize: "0.55rem", fontWeight: 700 }}>V</Box>
+                          <Box sx={{ px: 0.75, py: 0.25, bgcolor: "#1DA1F2", color: "white", borderRadius: 2, fontSize: "0.55rem", fontWeight: 700 }}>SATIN</Box>
+                          <Box sx={{ px: 0.75, py: 0.25, bgcolor: "#87CEEB", color: "#000", borderRadius: 2, fontSize: "0.55rem", fontWeight: 700 }}>SKY BLUE</Box>
+                          <Box sx={{ px: 0.75, py: 0.25, bgcolor: "#4B0082", color: "white", borderRadius: 2, fontSize: "0.55rem", fontWeight: 700 }}>EVENING</Box>
                         </Box>
                         <Box sx={{ mb: 1.5 }}>
-                          <Box component="img" src="/hero-5.webp" alt="Oatmeal Peach Bake" sx={{ width: "100%", height: { xs: 160, sm: 200 }, objectFit: "cover", borderRadius: 1 }} />
+                          <Box component="img" src="/dress.png" alt="Sky-Blue Satin Evening Dress" sx={{ width: "100%", height: { xs: 160, sm: 200 }, objectFit: "cover", borderRadius: 1 }} />
                         </Box>
                         <Typography variant="body2" sx={{ color: "#333", lineHeight: 1.4, mb: 1, fontSize: "0.85rem" }}>
-                          Perfect <strong>oatmeal peach bake</strong> for busy mornings. Healthy and satisfying!
+                          A sophisticated sky-blue satin dress with a soft sheen, elegant drape, and a flattering fit—made to turn heads.
                         </Typography>
                         <Box sx={{ mt: 1.5, p: 1.5, bgcolor: "#f8f8f8", borderRadius: 1 }}>
-                          <Typography variant="body2" sx={{ fontWeight: 700, fontSize: "0.8rem", mb: 0.5 }}>Ingredients:</Typography>
+                          <Typography variant="body2" sx={{ fontWeight: 700, fontSize: "0.8rem", mb: 0.5 }}>Features:</Typography>
                           <Typography variant="caption" sx={{ fontSize: "0.7rem", color: "#666", lineHeight: 1.3 }}>
-                            • Rolled oats • Fresh peaches • Cinnamon • Maple syrup • Vanilla extract
+                            • Silky satin finish • Sky-blue hue • Adjustable straps • Subtle side slit • Hidden zipper
                           </Typography>
                         </Box>
                       </Box>
