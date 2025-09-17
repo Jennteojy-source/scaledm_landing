@@ -11,29 +11,29 @@ interface InstagramInteractionDemoProps {
 
 const ANIMATION_TIMINGS = {
   AUTO_START_DELAY: 2000,
-  TAP_ANIMATION_DURATION: 500,
-  SHEET_OPEN_DELAY: 500,
-  TYPING_START_DELAY: 1500,
-  TYPING_CHAR_DELAY: 450,
-  FADE_OUT_DELAY: 600,
-  SUBMITTED_DELAY: 1000,
-  NOTIFICATION_DELAY: 1200,
-  NOTIFICATION_DURATION: 3200,
-  NOTIFICATION_CLICK_DELAY: 800,
-  DM_PULSE_DELAY: 2500,
-  DM_PULSE_DURATION: 1200,
-  DM_CLICK_FLASH_DELAY: 1000,
-  DM_CLICK_FLASH_DURATION: 350,
-  WEBSITE_OPEN_DELAY: 1000,
-  WEBSITE_DISPLAY_DURATION: 5000,
-  RESTART_DELAY: 1000,
+  TAP_ANIMATION_DURATION: 280,  // iOS tap feedback duration
+  SHEET_OPEN_DELAY: 150,  // Faster sheet response
+  TYPING_START_DELAY: 800,  // More natural typing delay
+  TYPING_CHAR_DELAY: 85,  // Realistic typing speed
+  FADE_OUT_DELAY: 400,
+  SUBMITTED_DELAY: 600,
+  NOTIFICATION_DELAY: 800,  // Faster notification
+  NOTIFICATION_DURATION: 2800,
+  NOTIFICATION_CLICK_DELAY: 600,
+  DM_PULSE_DELAY: 1800,
+  DM_PULSE_DURATION: 1000,
+  DM_CLICK_FLASH_DELAY: 800,
+  DM_CLICK_FLASH_DURATION: 250,
+  WEBSITE_OPEN_DELAY: 600,
+  WEBSITE_DISPLAY_DURATION: 4000,
+  RESTART_DELAY: 1200,
 } as const;
 
 const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 const MOBILE_ANIMATION_TIMINGS = {
   ...ANIMATION_TIMINGS,
-  TYPING_CHAR_DELAY: isMobile ? 300 : 450,
-  TAP_ANIMATION_DURATION: isMobile ? 500 : 600,
+  TYPING_CHAR_DELAY: isMobile ? 75 : 85,  // Faster, more natural typing
+  TAP_ANIMATION_DURATION: isMobile ? 240 : 280,  // iOS haptic feedback timing
 };
 
 const prefersReducedMotion = typeof window !== 'undefined' && 
@@ -44,6 +44,28 @@ const HARDWARE_ACCELERATION_STYLES = {
   willChange: 'transform, opacity',
   backfaceVisibility: 'hidden',
   WebkitBackfaceVisibility: 'hidden',
+  WebkitFontSmoothing: 'antialiased',
+  MozOsxFontSmoothing: 'grayscale',
+} as const;
+
+// iOS-style spring animation configs
+const IOS_SPRING = {
+  type: "spring",
+  stiffness: 380,
+  damping: 30,
+  mass: 0.8,
+} as const;
+
+const IOS_SPRING_SOFT = {
+  type: "spring",
+  stiffness: 300,
+  damping: 25,
+  mass: 0.9,
+} as const;
+
+const IOS_TAP_SCALE = {
+  pressed: 0.93,
+  duration: 0.12,
 } as const;
 
 const TYPING_TEXT = "LINK";
@@ -145,21 +167,26 @@ const useDemoAnimation = () => {
     }
     updateState({ typed: "", commentIconTapAnim: true });
     addTimeout(() => {
-      updateState({ commentIconTapAnim: false, phase: "openSheet" });
+      updateState({ commentIconTapAnim: false });
+      // Small delay before sheet opens for more natural feel
+      addTimeout(() => {
+        updateState({ phase: "openSheet" });
+      }, 50);
     }, ANIMATION_TIMINGS.TAP_ANIMATION_DURATION);
     addTimeout(() => {
       updateState({ phase: "typing" });
       let charIndex = 0;
-      const typeInterval = setInterval(() => {
-        if (isPaused) {
-          clearInterval(typeInterval);
-          return;
-        }
+      // Add slight random variation to typing speed for realism
+      const typeNextChar = () => {
+        if (isPaused) return;
         if (charIndex < TYPING_TEXT.length) {
           updateState({ typed: TYPING_TEXT.slice(0, charIndex + 1) });
           charIndex++;
+          // Variable typing speed for more natural feel
+          const nextDelay = MOBILE_ANIMATION_TIMINGS.TYPING_CHAR_DELAY + 
+            (Math.random() * 40 - 20); // ±20ms variation
+          addTimeout(() => typeNextChar(), nextDelay);
         } else {
-          clearInterval(typeInterval);
           addTimeout(
             () => updateState({ phase: "fadeOut" }),
             ANIMATION_TIMINGS.FADE_OUT_DELAY
@@ -169,13 +196,14 @@ const useDemoAnimation = () => {
             ANIMATION_TIMINGS.SUBMITTED_DELAY
           );
         }
-      }, MOBILE_ANIMATION_TIMINGS.TYPING_CHAR_DELAY);
-      intervalsRef.current.push(typeInterval as unknown as NodeJS.Timeout);
+      };
+      typeNextChar();
     }, ANIMATION_TIMINGS.TYPING_START_DELAY);
   }, [addTimeout, clearAllAnimations, updateState, isPaused]);
 
   const handleNotification = useCallback(() => {
     if (state.phase !== "submitted") return;
+    // Coordinated timing for smooth flow
     addTimeout(() => updateState({ showNotification: true }), ANIMATION_TIMINGS.NOTIFICATION_DELAY);
     addTimeout(() => {
       updateState({ notificationTapAnim: true });
@@ -184,7 +212,7 @@ const useDemoAnimation = () => {
       updateState({ showNotification: false, notificationTapAnim: false });
       addTimeout(() => {
         updateState({ phase: "dm" });
-      }, 150);
+      }, 100);
     }, ANIMATION_TIMINGS.NOTIFICATION_DELAY + ANIMATION_TIMINGS.NOTIFICATION_DURATION + ANIMATION_TIMINGS.NOTIFICATION_CLICK_DELAY);
   }, [state.phase, addTimeout, updateState]);
 
@@ -270,31 +298,27 @@ const NotificationBanner: React.FC<{
     {show && (
         <Box
           component={motion.div}
-          initial={{ y: -80, opacity: 0, scale: 0.8 }}
+          initial={{ y: -100, opacity: 0, scale: 0.95 }}
           animate={{ 
             y: 0, 
             opacity: 1, 
-            scale: tapAnim ? [1, 0.75, 1.25, 1] : 1,
-            boxShadow: [
-              "0 4px 20px rgba(0,0,0,0.1)",
-              "0 8px 30px rgba(0,0,0,0.15)",
-              "0 4px 20px rgba(0,0,0,0.1)"
-            ]
+            scale: tapAnim ? [1, IOS_TAP_SCALE.pressed, 1] : 1,
           }}
           exit={{ 
-            y: -80, 
+            y: -100, 
             opacity: 0, 
-            scale: 0.8,
+            scale: 0.95,
             transition: { 
-              duration: 0.3, 
-              ease: "easeIn" 
+              duration: 0.25, 
+              ease: [0.25, 0.46, 0.45, 0.94]
             }
           }}
           transition={{ 
-            duration: tapAnim ? 0.6 : 0.6, 
-            ease: "easeOut",
-            boxShadow: { duration: 2, repeat: Infinity, ease: "easeInOut" },
-            times: tapAnim ? [0, 0.3, 0.7, 1] : undefined
+            ...IOS_SPRING_SOFT,
+            scale: tapAnim ? {
+              duration: IOS_TAP_SCALE.duration * 2,
+              ease: "easeInOut"
+            } : undefined
           }}
           sx={{
             position: "absolute",
@@ -309,10 +333,11 @@ const NotificationBanner: React.FC<{
             px: 1.5,
             py: 1,
             borderRadius: 2,
-            boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-            bgcolor: "rgba(255,255,255,0.95)",
-            border: "1px solid rgba(0,0,0,0.1)",
-            backdropFilter: "blur(20px)",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08)",
+            bgcolor: "rgba(255,255,255,0.98)",
+            border: "1px solid rgba(0,0,0,0.08)",
+            backdropFilter: "blur(10px)",
+            WebkitBackdropFilter: "blur(10px)",
             cursor: "pointer",
             ...HARDWARE_ACCELERATION_STYLES
           }}
@@ -350,14 +375,10 @@ const CommentsPanel: React.FC<{
       {showPanel && (
         <Box
           component={motion.div}
-          initial={{ y: "100%", opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: "100%", opacity: 0 }}
-          transition={{ 
-            duration: 0.5, 
-            ease: [0.25, 0.46, 0.45, 0.94],
-            opacity: { duration: 0.3 }
-          }}
+          initial={{ y: "100%" }}
+          animate={{ y: 0 }}
+          exit={{ y: "100%" }}
+          transition={IOS_SPRING}
           sx={{ 
             position: "absolute",
             bottom: 0,
@@ -365,9 +386,9 @@ const CommentsPanel: React.FC<{
             right: 0,
             zIndex: 10,
             bgcolor: "white",
-            borderTopLeftRadius: 12,
-            borderTopRightRadius: 12,
-            boxShadow: "0 -4px 20px rgba(0,0,0,0.15)",
+            borderTopLeftRadius: 16,
+            borderTopRightRadius: 16,
+            boxShadow: "0 -2px 10px rgba(0,0,0,0.08)",
             overflow: "hidden",
             ...HARDWARE_ACCELERATION_STYLES
           }}
@@ -383,12 +404,25 @@ const CommentsPanel: React.FC<{
             position: "relative"
           }}>
             <Box sx={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Box sx={{ width: 40, height: 4, bgcolor: "grey.300", borderRadius: 2, mb: 1.5 }} />
+              <Box sx={{ width: 36, height: 5, bgcolor: "rgba(0,0,0,0.3)", borderRadius: 100, mb: 1.5 }} />
             </Box>
             <Typography variant="h6" align="center" sx={{ fontWeight: 700, mb: 1.5 }}>Comments</Typography>
             <AnimatePresence>
               {phase === "submitted" && (
-                <Box component={motion.div} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.4, ease: "easeOut" }} sx={{ display: "flex", alignItems: "flex-start", gap: 1, mb: 1.5 }}>
+                <Box 
+                  component={motion.div} 
+                  initial={{ opacity: 0, y: 6 }} 
+                  animate={{ 
+                    opacity: 1, 
+                    y: 0,
+                    transition: {
+                      delay: ANIMATION_TIMINGS.NOTIFICATION_DELAY / 1000 - 0.2,
+                      ...IOS_SPRING_SOFT
+                    }
+                  }} 
+                  exit={{ opacity: 0 }} 
+                  sx={{ display: "flex", alignItems: "flex-start", gap: 1, mb: 1.5 }}
+                >
                   <Avatar src="/user1.png" alt="nomnomlife user profile" sx={{ width: 24, height: 24 }} />
                   <Box sx={{ flex: 1 }}>
                     <Box sx={{ display: "flex", alignItems: "baseline", gap: 0.5 }}>
@@ -418,9 +452,9 @@ const CommentsPanel: React.FC<{
                   <Box sx={{ flex: 1, position: "relative" }}>
                     <Box sx={{ borderRadius: 10, border: (t) => `1px solid ${t.palette.divider}`, px: 1.5, py: 1, color: typed ? "text.primary" : "text.disabled", fontSize: 14, display: "flex", alignItems: "center", minHeight: 40 }}>
                       <motion.span
-                        initial={{ opacity: 0.6 }}
-                        animate={phase === "fadeOut" ? { opacity: 0 } : { opacity: typed ? 1 : 0.6 }}
-                        transition={{ duration: 0.25 }}
+                    initial={{ opacity: 0.5 }}
+                    animate={phase === "fadeOut" ? { opacity: 0 } : { opacity: typed ? 1 : 0.5 }}
+                    transition={{ duration: 0.2, ease: "easeOut" }}
                         style={{ 
                           display: "flex", 
                           alignItems: "center",
@@ -434,7 +468,7 @@ const CommentsPanel: React.FC<{
                           <motion.span 
                             initial={{ opacity: 0 }} 
                             animate={{ opacity: [0, 1, 0] }} 
-                            transition={{ repeat: Infinity, duration: 1 }} 
+                            transition={{ repeat: Infinity, duration: 0.8, ease: "easeInOut" }} 
                             style={{ 
                               marginLeft: 2,
                               ...HARDWARE_ACCELERATION_STYLES
@@ -530,17 +564,20 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
         </button>
       </Box>
       {/* Fixed 4:5 ratio: larger dimensions for demo */}
-      <Box sx={{ 
-        width: { xs: '375px', sm: '480px' }, 
-        height: { xs: '469px', sm: '600px' }, 
-        maxWidth: '480px',
-        maxHeight: '600px',
-        aspectRatio: '4/5',
-        display: 'flex',
-        margin: 'auto',
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
-        position: 'relative'
-      }}>
+          <Box sx={{ 
+            width: { xs: '375px', sm: '480px' }, 
+            height: { xs: '469px', sm: '600px' }, 
+            maxWidth: '480px',
+            maxHeight: '600px',
+            aspectRatio: '4/5',
+            display: 'flex',
+            margin: 'auto',
+            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+            position: 'relative',
+            // Add subtle shadow for depth
+            boxShadow: { xs: 'none', sm: '0 10px 40px rgba(0,0,0,0.08)' },
+            borderRadius: { xs: 0, sm: 2 }
+          }}>
         <Box 
           sx={{ 
           width: "100%", 
@@ -659,12 +696,11 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
                   <IconButton 
                     component={motion.div}
                     animate={state.commentIconTapAnim ? {
-                      scale: [1, 0.7, 1.3, 1]
+                      scale: [1, IOS_TAP_SCALE.pressed, 1]
                     } : { scale: 1 }}
                     transition={{
-                      duration: 0.6,
-                      ease: "easeInOut",
-                      times: [0, 0.3, 0.7, 1]
+                      duration: IOS_TAP_SCALE.duration * 2,
+                      ease: [0.25, 0.46, 0.45, 0.94]
                     }}
                     size="small" 
                     aria-label="Add comment"
@@ -732,28 +768,15 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
             <Box
               component={motion.div}
               initial={{ 
-                y: "100%",
-                opacity: 0,
-                scale: 0.95
+                y: "100%"
               }}
               animate={{ 
-                y: 0,
-                opacity: 1,
-                scale: 1
+                y: 0
               }}
               exit={{ 
-                y: "100%",
-                opacity: 0,
-                scale: 0.95
+                y: "100%"
               }}
-              transition={{ 
-                type: "spring", 
-                stiffness: 280, 
-                damping: 30,
-                mass: 0.8,
-                opacity: { duration: 0.3, ease: "easeOut" },
-                scale: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }
-              }}
+              transition={IOS_SPRING}
               sx={{
                 position: "absolute",
                 inset: 0,
@@ -834,12 +857,12 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
                           <Box 
                             component={motion.div}
                             animate={state.ctaTapAnim ? {
-                              scale: [1, 0.75, 1.3, 1]
+                              scale: [1, IOS_TAP_SCALE.pressed, 1.05, 1]
                             } : { scale: 1 }}
                             transition={{ 
-                              duration: 0.6,
-                              ease: "easeInOut",
-                              times: [0, 0.3, 0.7, 1]
+                              duration: 0.25,
+                              ease: [0.25, 0.46, 0.45, 0.94],
+                              times: [0, 0.4, 0.7, 1]
                             }}
                             onClick={(e) => {
                               e.stopPropagation();
@@ -878,7 +901,11 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
               </Box>
               <AnimatePresence>
                 {state.showWebsite && (
-                  <Box component={motion.div} initial={{ y: "100%", opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: "100%", opacity: 0 }} transition={{ duration: 0.6, ease: "easeOut" }} sx={{ position: "absolute", inset: 0, zIndex: 4, bgcolor: "background.paper", display: "flex", flexDirection: "column" }}>
+                  <Box component={motion.div} 
+                    initial={{ y: "100%" }} 
+                    animate={{ y: 0 }} 
+                    exit={{ y: "100%" }} 
+                    transition={IOS_SPRING} sx={{ position: "absolute", inset: 0, zIndex: 4, bgcolor: "background.paper", display: "flex", flexDirection: "column" }}>
                     <Box sx={{ px: 1.25, py: 1, borderBottom: (t) => `1px solid ${t.palette.divider}` }}>
                       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                         <Box sx={{ display: "flex", gap: 0.5, mr: 1 }}>
@@ -895,7 +922,7 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
                           component={motion.div} 
                           initial={{ width: 0 }} 
                           animate={{ width: "100%" }} 
-                          transition={{ duration: 1.2, ease: "easeInOut" }} 
+                          transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }} 
                           style={HARDWARE_ACCELERATION_STYLES}
                           sx={{ height: "100%", bgcolor: "primary.main" }} 
                         />
