@@ -2,8 +2,6 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Box, Typography, Avatar, IconButton } from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
-import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface InstagramInteractionDemoProps {
@@ -48,7 +46,27 @@ const HARDWARE_ACCELERATION_STYLES = {
   WebkitBackfaceVisibility: 'hidden',
 } as const;
 
-const TYPING_TEXT = "RECIPE";
+const TYPING_TEXT = "LINK";
+
+// Instagram-style icons - exact replicas
+
+const InstagramCommentIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path fillRule="evenodd" clipRule="evenodd" d="M20.656 17.008a9.993 9.993 0 1 0-3.59 3.615L22 22z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" fill="none"/>
+  </svg>
+);
+
+const InstagramShareIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M22 3L9.218 10.083M11.698 20.334L22 3.001H2l7.218 7.083 2.48 10.25z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" fill="none"/>
+  </svg>
+);
+
+const InstagramBookmarkIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="20 21 12 13.44 4 21 4 3 20 3 20 21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+  </svg>
+);
 
 type DemoPhase = "idle" | "openSheet" | "typing" | "fadeOut" | "submitted" | "dm";
 
@@ -129,7 +147,6 @@ const useDemoAnimation = () => {
     addTimeout(() => {
       updateState({ commentIconTapAnim: false, phase: "openSheet" });
     }, ANIMATION_TIMINGS.TAP_ANIMATION_DURATION);
-    addTimeout(() => updateState({ phase: "openSheet" }), ANIMATION_TIMINGS.SHEET_OPEN_DELAY + 800);
     addTimeout(() => {
       updateState({ phase: "typing" });
       let charIndex = 0;
@@ -286,28 +303,37 @@ const NotificationBanner: React.FC<{
             right: 8,
             mx: "auto",
             zIndex: 2,
-            display: "grid",
-            gridTemplateColumns: "auto 1fr",
+            display: "flex",
             alignItems: "center",
-            columnGap: 1,
-            px: 1,
-            py: 0.75,
-            borderRadius: 3,
-            boxShadow: (t) => t.shadows[6],
-            bgcolor: (t) => t.palette.mode === "dark" ? "rgba(38,38,38,0.85)" : "rgba(255,255,255,0.9)",
-            border: (t) => `1px solid ${t.palette.divider}`,
-            backdropFilter: "saturate(1.2) blur(12px)",
+            gap: 1,
+            px: 1.5,
+            py: 1,
+            borderRadius: 2,
+            boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+            bgcolor: "rgba(255,255,255,0.95)",
+            border: "1px solid rgba(0,0,0,0.1)",
+            backdropFilter: "blur(20px)",
             cursor: "pointer",
             ...HARDWARE_ACCELERATION_STYLES
           }}
           onClick={onClose}
         >
-        <Avatar src="/animation_profile.png" alt="fitfoodie_life business profile" sx={{ width: 28, height: 28 }} />
-        <Box sx={{ display: "flex", flexDirection: "column", lineHeight: 1.2, alignItems: "flex-start", textAlign: "left" }}>
-          <Box sx={{ display: "flex", alignItems: "baseline", gap: 1 }}>
-            <Typography variant="body2" sx={{ color: "text.secondary" }}>fitfoodie_life</Typography>
-          </Box>
-          <Typography variant="body2" sx={{ width: "100%" }}>Sent a message</Typography>
+        <Avatar src="/animation_profile.png" alt="stylebysarah business profile" sx={{ width: 28, height: 28 }} />
+        <Box sx={{ display: "flex", flexDirection: "column", lineHeight: 1.2, alignItems: "flex-start", textAlign: "left", flex: 1 }}>
+          <Typography variant="body2" sx={{ 
+            fontWeight: 600, 
+            fontSize: 14, 
+            color: "#262626" 
+          }}>
+            fitfoodie_life
+          </Typography>
+          <Typography variant="body2" sx={{ 
+            fontSize: 13, 
+            color: "#8e8e8e",
+            width: "100%" 
+          }}>
+            Sent a message
+          </Typography>
         </Box>
       </Box>
     )}
@@ -320,41 +346,46 @@ const CommentsPanel: React.FC<{
 }> = ({ phase, typed }) => {
   const showPanel = phase === "openSheet" || phase === "typing" || phase === "fadeOut" || phase === "submitted";
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {showPanel && (
         <Box
           component={motion.div}
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          exit={{ opacity: 0, height: 0 }}
-          transition={{ duration: 0.45, ease: "easeInOut" }}
+          initial={{ y: "100%", opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: "100%", opacity: 0 }}
+          transition={{ 
+            duration: 0.5, 
+            ease: [0.25, 0.46, 0.45, 0.94],
+            opacity: { duration: 0.3 }
+          }}
           sx={{ 
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: 10,
+            bgcolor: "white",
+            borderTopLeftRadius: 12,
+            borderTopRightRadius: 12,
+            boxShadow: "0 -4px 20px rgba(0,0,0,0.15)",
             overflow: "hidden",
-            position: "relative",
-            zIndex: 1,
-            mt: 0,
-            mb: { xs: 0, sm: 1 },
-            bgcolor: "white"
+            ...HARDWARE_ACCELERATION_STYLES
           }}
         >
           <Box sx={{ 
             width: "100%", 
             bgcolor: "white", 
-            borderTopLeftRadius: 8, 
-            borderTopRightRadius: 8, 
-            boxShadow: { xs: "none", sm: (t) => t.shadows[2] }, 
             p: { xs: 1.5, sm: 2 },
-            minHeight: { xs: 140, sm: 160 },
-            maxHeight: { xs: 220, sm: 250 },
+            minHeight: { xs: 200, sm: 220 },
+            maxHeight: { xs: 280, sm: 320 },
             display: "flex",
             flexDirection: "column",
-            position: "relative",
-            zIndex: 2
+            position: "relative"
           }}>
             <Box sx={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Box sx={{ width: 40, height: 4, bgcolor: "grey.300", borderRadius: 2, mb: 1 }} />
+              <Box sx={{ width: 40, height: 4, bgcolor: "grey.300", borderRadius: 2, mb: 1.5 }} />
             </Box>
-            <Typography variant="h6" align="center" sx={{ fontWeight: 700, mb: 1 }}>Comments</Typography>
+            <Typography variant="h6" align="center" sx={{ fontWeight: 700, mb: 1.5 }}>Comments</Typography>
             <AnimatePresence>
               {phase === "submitted" && (
                 <Box component={motion.div} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.4, ease: "easeOut" }} sx={{ display: "flex", alignItems: "flex-start", gap: 1, mb: 1.5 }}>
@@ -450,6 +481,7 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
         zIndex: 0,
         flexDirection: "column",
         gap: 2,
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
       }}
     >
       {/* Control Panel - Outside the animation */}
@@ -499,25 +531,28 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
       </Box>
       {/* Fixed 4:5 ratio: larger dimensions for demo */}
       <Box sx={{ 
-        width: { xs: '400px', sm: '480px' }, 
-        height: { xs: '500px', sm: '600px' }, 
+        width: { xs: '375px', sm: '480px' }, 
+        height: { xs: '469px', sm: '600px' }, 
         maxWidth: '480px',
         maxHeight: '600px',
         aspectRatio: '4/5',
         display: 'flex',
-        margin: 'auto'
+        margin: 'auto',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+        position: 'relative'
       }}>
         <Box 
           sx={{ 
           width: "100%", 
           height: "100%", 
           bgcolor: "white", 
-          borderRadius: 1.5, 
+          borderRadius: { xs: 0, sm: 1.5 }, 
           display: "flex", 
           flexDirection: "column", 
-          border: (t) => `1px solid ${t.palette.divider}`,
+          border: { xs: "none", sm: (t) => `1px solid ${t.palette.divider}` },
           position: "relative",
-          overflow: "hidden"
+          overflow: "hidden",
+          boxShadow: { xs: "none", sm: "0 0 0 1px rgba(0,0,0,0.1)" }
         }}
         >
         <NotificationBanner 
@@ -525,11 +560,47 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
           onClose={() => updateState({ showNotification: false, phase: "dm" })} 
           tapAnim={state.notificationTapAnim}
         />
-        <Box sx={{ px: 1.25, py: 1, display: "flex", alignItems: "center", gap: 1 }}>
-          <Avatar src="/animation_profile.png" alt="fitfoodie_life business profile" sx={{ width: 28, height: 28 }} />
-          <Typography variant="body2" sx={{ fontWeight: 700 }}>fitfoodie_life</Typography>
+
+        <Box sx={{ px: 1.25, py: 1, display: "flex", alignItems: "center", gap: 1, borderBottom: "1px solid #efefef" }}>
+          <Box sx={{ position: "relative" }}>
+            <Avatar src="/animation_profile.png" alt="stylebysarah business profile" sx={{ 
+              width: 32, 
+              height: 32,
+              border: "2px solid #efefef"
+            }} />
+            <Box sx={{
+              position: "absolute",
+              top: -2,
+              left: -2,
+              right: -2,
+              bottom: -2,
+              borderRadius: "50%",
+              background: "linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)",
+              zIndex: -1
+            }} />
+          </Box>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+            <Typography variant="body2" sx={{ fontWeight: 600, fontSize: 14 }}>stylebysarah</Typography>
+            <Box sx={{ 
+              width: 12, 
+              height: 12, 
+              borderRadius: "50%", 
+              bgcolor: "#0095f6", 
+              display: "flex", 
+              alignItems: "center", 
+              justifyContent: "center",
+              "&::after": {
+                content: '"✓"',
+                color: "white",
+                fontSize: 8,
+                fontWeight: "bold"
+              }
+            }} />
+          </Box>
           <Box sx={{ ml: "auto" }}>
-            <IconButton size="small" aria-label="More options"><MoreHorizIcon fontSize="small" /></IconButton>
+            <IconButton size="small" aria-label="More options" sx={{ color: "#262626" }}>
+              <MoreHorizIcon fontSize="small" />
+            </IconButton>
           </Box>
         </Box>
         <Box sx={{ position: "relative", flex: 1, minHeight: 0 }}>
@@ -553,48 +624,107 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
             }} />
           </Box>
         </Box>
-        <Box sx={{ px: 0.5, py: 0.5, display: "flex", alignItems: "center", position: "relative", gap: 0.25, height: 36 }}>
-          <IconButton size="small" aria-label="Like post" sx={{ color: "#262626", width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <FavoriteBorderIcon sx={{ fontSize: 22, verticalAlign: "middle" }} />
-          </IconButton>
-          <Box sx={{ position: "relative" }}>
-            <IconButton 
-              component={motion.div}
-              animate={state.commentIconTapAnim ? {
-                scale: [1, 0.7, 1.3, 1]
-              } : { scale: 1 }}
-              transition={{
-                duration: 0.6,
-                ease: "easeInOut",
-                times: [0, 0.3, 0.7, 1]
+        {/* Carousel pagination dots */}
+        <Box sx={{ 
+          display: "flex",
+          justifyContent: "center",
+          gap: 0.5,
+          py: 0.5
+        }}>
+          {[1, 2, 3, 4, 5].map((dot, index) => (
+            <Box
+              key={dot}
+              sx={{
+                width: 6,
+                height: 6,
+                borderRadius: "50%",
+                bgcolor: index === 0 ? "#0095f6" : "#c7c7c7",
+                transition: "background-color 0.2s ease"
               }}
-              size="small" 
-              aria-label="Add comment"
-              sx={{ 
-                color: "#262626", 
-                width: 32, 
-                height: 32, 
-                display: "flex", 
-                alignItems: "center", 
-                justifyContent: "center",
-                ...HARDWARE_ACCELERATION_STYLES
-              }} 
-              onClick={startComments}
-            >
-              <ChatBubbleOutlineIcon sx={{ fontSize: 22, verticalAlign: "middle" }} />
-            </IconButton>
-          </Box>
-          <Box sx={{ ml: "auto" }}>
-            <IconButton size="small" aria-label="Save post" sx={{ color: "#262626", width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <BookmarkBorderOutlinedIcon sx={{ fontSize: 22, verticalAlign: "middle" }} />
-            </IconButton>
-          </Box>
+            />
+          ))}
         </Box>
-        <Box sx={{ px: 1.25 }}>
-          <Typography variant="body2" sx={{ textAlign: "left" }}>
-            <strong>fitfoodie_life</strong> Comment <strong>{TYPING_TEXT}</strong> and I'll DM you the link to this yummy treat!
+        
+        <Box sx={{ px: 1.25, py: 0.5 }}>
+          <Box sx={{ display: "flex", alignItems: "center", mb: 0.75 }}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                <IconButton size="small" aria-label="Like post" sx={{ color: "#262626", width: 24, height: 24, p: 0 }}>
+                  <FavoriteBorderIcon sx={{ fontSize: 24 }} />
+                </IconButton>
+                <Typography variant="caption" sx={{ fontSize: 14, color: "#262626" }}>23K</Typography>
+              </Box>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                <Box sx={{ position: "relative" }}>
+                  <IconButton 
+                    component={motion.div}
+                    animate={state.commentIconTapAnim ? {
+                      scale: [1, 0.7, 1.3, 1]
+                    } : { scale: 1 }}
+                    transition={{
+                      duration: 0.6,
+                      ease: "easeInOut",
+                      times: [0, 0.3, 0.7, 1]
+                    }}
+                    size="small" 
+                    aria-label="Add comment"
+                    sx={{ 
+                      color: "#262626", 
+                      width: 24, 
+                      height: 24, 
+                      p: 0,
+                      ...HARDWARE_ACCELERATION_STYLES
+                    }} 
+                    onClick={startComments}
+                  >
+                    <InstagramCommentIcon />
+                  </IconButton>
+                </Box>
+                <Typography variant="caption" sx={{ fontSize: 14, color: "#262626" }}>481</Typography>
+              </Box>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                <IconButton size="small" aria-label="Share post" sx={{ color: "#262626", width: 24, height: 24, p: 0 }}>
+                  <InstagramShareIcon />
+                </IconButton>
+                <Typography variant="caption" sx={{ fontSize: 14, color: "#262626" }}>146</Typography>
+              </Box>
+            </Box>
+            <Box sx={{ ml: "auto", display: "flex", alignItems: "center", gap: 0.5 }}>
+              <IconButton size="small" aria-label="Save post" sx={{ color: "#262626", width: 24, height: 24, p: 0 }}>
+                <InstagramBookmarkIcon />
+              </IconButton>
+            </Box>
+          </Box>
+          
+        </Box>
+        <Box sx={{ px: 1.25, pb: 1 }}>
+          <Box sx={{ display: "flex", alignItems: "flex-start", gap: 0.5, mb: 0.5 }}>
+            <Typography variant="body2" sx={{ 
+              fontWeight: 600, 
+              fontSize: 14, 
+              color: "#262626",
+              textAlign: "left",
+              lineHeight: 1.4
+            }}>
+              stylebysarah
+            </Typography>
+            <Typography variant="body2" sx={{ 
+              fontSize: 14, 
+              color: "#262626",
+              textAlign: "left",
+              lineHeight: 1.4
+            }}>
+              Comment <Box component="span" sx={{ fontWeight: 600 }}>{TYPING_TEXT}</Box> and I'll DM you a link to get this outfit!
+            </Typography>
+          </Box>
+          <Typography variant="caption" sx={{ 
+            color: "#8e8e8e", 
+            fontSize: 12,
+            textAlign: "left",
+            display: "block"
+          }}>
+            52 minutes ago
           </Typography>
-          <Typography variant="caption" color="text.secondary" sx={{ display: "block", mt: 0.5, textAlign: "left" }}>52 minutes ago</Typography>
         </Box>
         <CommentsPanel phase={state.phase} typed={state.typed} />
         <AnimatePresence>
@@ -635,9 +765,9 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
               }}
             >
               <Box sx={{ px: 1.25, py: 1, display: "flex", alignItems: "center", gap: 1, borderBottom: (t) => `1px solid ${t.palette.divider}` }}>
-                <Avatar src="/animation_profile.png" alt="fitfoodie_life business profile" sx={{ width: 26, height: 26 }} />
+                <Avatar src="/animation_profile.png" alt="stylebysarah business profile" sx={{ width: 26, height: 26 }} />
                 <Box sx={{ display: "flex", flexDirection: "column", lineHeight: 1 }}>
-                  <Typography variant="body2" sx={{ fontWeight: 700 }}>fitfoodie_life</Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 700 }}>stylebysarah</Typography>
                 </Box>
               </Box>
               <Box sx={{ px: 2, py: 1, textAlign: "center" }}>
@@ -646,7 +776,7 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
               </Box>
               <Box sx={{ px: 2, textAlign: "center", mb: 1 }}>
                 <Typography variant="caption" color="text.secondary">
-                  <strong>fitfoodie_life</strong> messaged you about a comment that you made on their post. <u>See post</u>
+                  <strong>stylebysarah</strong> messaged you about a comment that you made on their post. <u>See post</u>
                 </Typography>
               </Box>
               <Box sx={{ 
@@ -658,7 +788,7 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
                 py: 1
               }}>
                 <Box sx={{ display: "flex", alignItems: "flex-start", gap: 1, mb: 1 }}>
-                  <Avatar src="/animation_profile.png" alt="fitfoodie_life business profile" sx={{ width: 24, height: 24, mt: 0.5 }} />
+                  <Avatar src="/animation_profile.png" alt="stylebysarah business profile" sx={{ width: 24, height: 24, mt: 0.5 }} />
                   <Box sx={{ position: "relative", maxWidth: "85%", flex: 1 }}>
                     <motion.div animate={{}} transition={{}}>
                       <Box sx={{
@@ -671,7 +801,7 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
                         overflow: "hidden",
                         cursor: "default"
                       }}>
-                        <Box component="img" src="/hero-5.webp" alt="Recipe" sx={{ 
+                        <Box component="img" src="/dress.png" alt="Recipe" sx={{ 
                           width: "100%", 
                           height: { xs: 140, sm: 170 },
                           objectFit: "cover",
@@ -733,7 +863,7 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
                               maxWidth: "100%"
                             }}
                           >
-                            Get the Recipe
+                            Shop
                           </Box>
                         </Box>
                       </Box>
@@ -757,7 +887,7 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
                           <Box sx={{ width: 10, height: 10, borderRadius: 5, bgcolor: "#28C840" }} />
                         </Box>
                         <Box sx={{ flex: 1, borderRadius: 12, border: (t) => `1px solid ${t.palette.divider}`, px: 1.25, py: 0.6, display: "flex", alignItems: "center" }}>
-                          <Typography variant="caption" sx={{ fontWeight: 700 }}>fitfoodielife.com</Typography>
+                          <Typography variant="caption" sx={{ fontWeight: 700 }}>stylebysarah.com</Typography>
                         </Box>
                       </Box>
                       <Box sx={{ mt: 1, height: 2, bgcolor: (t) => t.palette.action.hover, borderRadius: 1, overflow: "hidden" }}>
@@ -777,7 +907,7 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
                         <Box sx={{ ml: "auto" }}>→</Box>
                       </Box>
                       <Box sx={{ bgcolor: "#f5f5f0", px: 2, py: 0.5, borderBottom: "1px solid #e0e0e0" }}>
-                        <Typography variant="h6" sx={{ fontFamily: "cursive", fontWeight: 400, color: "#8B4513", textAlign: "center", fontSize: "0.95rem" }}>fitfoodie life</Typography>
+                        <Typography variant="h6" sx={{ fontFamily: "cursive", fontWeight: 400, color: "#8B4513", textAlign: "center", fontSize: "0.95rem" }}>stylebysarah</Typography>
                         <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 0.5, mt: 0.25 }}>
                           <Box sx={{ width: 16, height: 16, borderRadius: "50%", bgcolor: "#ddd", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.6rem" }}>♡</Box>
                           <Box sx={{ width: 16, height: 16, borderRadius: "50%", bgcolor: "#ddd", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.6rem" }}>🔍</Box>
