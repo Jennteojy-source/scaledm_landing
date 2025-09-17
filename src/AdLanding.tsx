@@ -1,5 +1,6 @@
 import React from 'react';
 import SharedContent from './SharedContent';
+import InstagramPost3 from './InstagramPost3';
 
 const AdLanding: React.FC = () => {
   return (
@@ -11,6 +12,7 @@ const AdLanding: React.FC = () => {
 
       {/* Main Content */}
       <SharedContent is916={false} />
+      <InstagramPost3 />
 
     </div>
   );

@@ -18,7 +18,7 @@ const InstagramPost2: React.FC = () => {
 
   useEffect(() => {
     const totalSteps = commenters.length * 2;
-    const delay = step % 2 === 0 ? 700 : 900; // comment then reply
+    const delay = step === 0 ? 2000 : (step % 2 === 0 ? 700 : 900); // initial wait, then comment/reply cadence
 
     if (step < totalSteps) {
       const t = window.setTimeout(() => setStep(prev => prev + 1), delay);
@@ -26,13 +26,13 @@ const InstagramPost2: React.FC = () => {
     }
 
     // Pause, then loop
-    const resetTimer = window.setTimeout(() => setStep(0), 1800);
+    const resetTimer = window.setTimeout(() => setStep(0), 4000);
     return () => window.clearTimeout(resetTimer);
   }, [step, commenters.length]);
 
   return (
     <div className="w-full flex justify-center px-3">
-      <div className="max-w-[680px] w-full bg-white rounded-2xl shadow border border-neutral-200 overflow-hidden flex flex-col h-[860px] sm:h-[920px] md:h-[1000px] min-h-0">
+      <div className="relative max-w-[850px] w-full bg-white rounded-none shadow border border-neutral-200 overflow-hidden flex flex-col h-[860px] sm:h-[920px] md:h-[1000px] min-h-0">
 
         {/* Post header */}
         <div className="px-4 py-3 flex items-center gap-3">
@@ -43,8 +43,8 @@ const InstagramPost2: React.FC = () => {
           <div className="ml-auto text-neutral-500">•••</div>
         </div>
 
-        {/* Media */}
-        <div className="w-full h-[160px] sm:h-[200px] md:h-[240px] bg-white">
+        {/* Media (slightly taller) */}
+        <div className="w-full h-[220px] sm:h-[260px] md:h-[300px] bg-white">
           <img src="/amazon.png" alt="post" className="w-full h-full object-contain" loading="lazy" />
         </div>
 
@@ -62,8 +62,8 @@ const InstagramPost2: React.FC = () => {
         {/* Likes + Caption */}
         <div className="px-4 pb-2 text-sm">
           <p className="font-semibold">1,058 likes</p>
-          <p className="mt-1"><span className="font-semibold">bestdailydeals</span> Amazon deals on stuff you actually need!</p>
-          <p className="mt-1">Comment <span className="font-bold">NEED</span> and I’ll DM you all the promo codes and Amazon product links.</p>
+          <p className="mt-1"><span className="font-semibold">bestdailydeals</span> Amazing deals on stuff you actually need!</p>
+          <p className="mt-1">Comment <span className="font-bold">NEED</span> and I’ll DM you all the promo codes and product links.</p>
         </div>
 
         {/* Comments thread */}
@@ -113,6 +113,41 @@ const InstagramPost2: React.FC = () => {
           })}
         </div>
       </div>
+      {/* Powered by ScaleDM in-card overlay at the end of each loop */}
+      <AnimatePresence>
+        {step >= commenters.length * 2 && (
+          <motion.div
+            key="scaledm-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
+            className="pointer-events-none absolute inset-0 mx-auto flex items-center justify-center bg-black/60"
+          >
+            <motion.div
+              initial={{ scale: 0.96, y: 10, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.98, y: 6, opacity: 0 }}
+              transition={{ duration: 0.35 }}
+              className="max-w-[92%] sm:max-w-[88%] md:max-w-[820px]"
+            >
+              <div className="mx-auto rounded-2xl px-5 sm:px-7 py-4 sm:py-5 text-center shadow-xl"
+                   style={{
+                     background: 'linear-gradient(135deg, rgba(13,20,33,0.95) 0%, rgba(7,12,22,0.9) 100%)'
+                   }}
+              >
+                <div className="text-white text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight leading-tight flex items-center justify-center gap-3 flex-wrap">
+                  <span>Automated comment replies — powered by</span>
+                  <span className="text-[#1976d2] flex items-center gap-2">
+                    ScaleDM
+                    <img src="/logo.svg" alt="ScaleDM logo" className="w-6 h-6 sm:w-7 sm:h-7" />
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

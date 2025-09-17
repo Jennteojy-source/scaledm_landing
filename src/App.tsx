@@ -6,6 +6,9 @@ import Animation from './Animation';
 import FeaturesPage from './FeaturesPage';
 import InstagramPost from './InstagramPost';
 import InstagramPost2 from './InstagramPost2';
+import InstagramPost3 from './InstagramPost3';
+import InstagramPost4 from './InstagramPost4';
+import Instagram5 from './Instagram5';
 
 const App: React.FC = () => {
   return (
@@ -26,6 +29,9 @@ const App: React.FC = () => {
             <Route path="/features" element={<FeaturesPage />} />
             <Route path="/ig-post" element={<InstagramPost />} />
             <Route path="/ig-post-2" element={<InstagramPost2 />} />
+            <Route path="/ig-post-3" element={<InstagramPost3 />} />
+            <Route path="/ig-post-4" element={<InstagramPost4 />} />
+            <Route path="/ig-post-5" element={<Instagram5 />} />
           </Routes>
         </div>
       </div>
