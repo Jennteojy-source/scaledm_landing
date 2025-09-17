@@ -30,6 +30,7 @@ const ANIMATION_TIMINGS = {
   DM_CLICK_FLASH_DURATION: 300,
   WEBSITE_OPEN_DELAY: 800,
   WEBSITE_DISPLAY_DURATION: 5200,
+  SCALEDM_UPSELL_DISPLAY_DURATION: 5000,
   RESTART_DELAY: 1600,
 } as const;
 
@@ -112,6 +113,7 @@ interface DemoState {
   commentIconTapAnim: boolean;
   notificationTapAnim: boolean;
   ctaTapAnim: boolean;
+  showScaleDMUpsell: boolean;
 }
 
 // removed unused useAnimationFrame hook
@@ -129,6 +131,7 @@ const useDemoAnimation = () => {
     commentIconTapAnim: false,
     notificationTapAnim: false,
     ctaTapAnim: false,
+    showScaleDMUpsell: false,
   });
   
   const [isPaused, setIsPaused] = useState(false);
@@ -234,32 +237,23 @@ const useDemoAnimation = () => {
     addTimeout(() => {
       updateState({ ctaTapAnim: true });
     }, ANIMATION_TIMINGS.DM_PULSE_DELAY + ANIMATION_TIMINGS.DM_PULSE_DURATION);
-    addTimeout(
-      () => updateState({ showWebsite: true, ctaTapAnim: false }),
-      ANIMATION_TIMINGS.DM_PULSE_DELAY + ANIMATION_TIMINGS.DM_PULSE_DURATION + ANIMATION_TIMINGS.WEBSITE_OPEN_DELAY
-    );
-    addTimeout(() => {
-      updateState({
-        showWebsite: false,
-        typed: "",
-        phase: "idle",
-        iteration: state.iteration + 1,
-        ctaTapAnim: false,
-      });
-      addTimeout(() => startComments(), ANIMATION_TIMINGS.RESTART_DELAY);
-    }, ANIMATION_TIMINGS.DM_PULSE_DELAY + ANIMATION_TIMINGS.DM_PULSE_DURATION + ANIMATION_TIMINGS.WEBSITE_OPEN_DELAY + ANIMATION_TIMINGS.WEBSITE_DISPLAY_DURATION);
+  addTimeout(
+    () => updateState({ showWebsite: true, ctaTapAnim: false }),
+    ANIMATION_TIMINGS.DM_PULSE_DELAY + ANIMATION_TIMINGS.DM_PULSE_DURATION + ANIMATION_TIMINGS.WEBSITE_OPEN_DELAY
+  );
+  // Show ScaleDM upsell after website loads
+  addTimeout(() => {
+    updateState({ showScaleDMUpsell: true });
+  }, ANIMATION_TIMINGS.DM_PULSE_DELAY + ANIMATION_TIMINGS.DM_PULSE_DURATION + ANIMATION_TIMINGS.WEBSITE_OPEN_DELAY + 2000);
+  // Animation stops at upsell - no automatic restart
   }, [state.phase, state.iteration, addTimeout, updateState, startComments]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      startComments();
-    }, ANIMATION_TIMINGS.AUTO_START_DELAY);
-    
+    // Animation will only start manually via controller
     return () => {
-      clearTimeout(timer);
       clearAllAnimations();
     };
-  }, [startComments, clearAllAnimations]);
+  }, [clearAllAnimations]);
 
   useEffect(() => handleNotification(), [handleNotification]);
   useEffect(() => handleDmPhase(), [handleDmPhase]);
@@ -289,6 +283,7 @@ const useDemoAnimation = () => {
       commentIconTapAnim: false,
       notificationTapAnim: false,
       ctaTapAnim: false,
+      showScaleDMUpsell: false,
     });
   }, [clearAllAnimations]);
 
@@ -363,7 +358,7 @@ const NotificationBanner: React.FC<{
             fontSize: 14, 
             color: "#262626" 
           }}>
-            fitfoodie_life
+            stylebysarah
           </Typography>
           <Typography variant="body2" sx={{ 
             fontSize: 13, 
@@ -501,6 +496,100 @@ const CommentsPanel: React.FC<{
     </AnimatePresence>
   );
 };
+
+const ScaleDMUpsellOverlay: React.FC<{
+  show: boolean;
+  onClose: () => void;
+}> = ({ show, onClose }) => (
+  <AnimatePresence>
+    {show && (
+      <Box
+        component={motion.div}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.3 }}
+        sx={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 9999,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          p: 3,
+          ...HARDWARE_ACCELERATION_STYLES
+        }}
+        className="bg-black/60"
+        onClick={onClose}
+      >
+        <Box
+          component={motion.div}
+          initial={{ scale: 0.98, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.98, opacity: 0 }}
+          transition={{ duration: 0.35 }}
+          onClick={(e) => e.stopPropagation()}
+          sx={{
+            position: "relative",
+            ...HARDWARE_ACCELERATION_STYLES
+          }}
+          className="bg-white rounded-2xl shadow-2xl px-6 py-8 sm:px-8 sm:py-10 max-w-md w-[92%] sm:w-full text-center"
+        >
+          <Box 
+            sx={{ 
+              position: "absolute", 
+              top: 0, 
+              left: 0, 
+              right: 0, 
+              height: 4, 
+              background: (theme) => theme.palette.primary.main,
+              borderRadius: "8px 8px 0 0"
+            }} 
+          />
+
+          {/* Primary message first */}
+          <Typography 
+            variant="h5"
+            sx={{ 
+              fontWeight: 900, 
+              mb: 2, 
+              letterSpacing: -0.2,
+              color: "#1a1a1a",
+              fontSize: { xs: "1.4rem", sm: "1.6rem" }
+            }}
+          >
+            Auto send DM to anyone who engages with your content
+          </Typography>
+
+          <Box className="mx-auto mt-4 flex items-center justify-center gap-2">
+            <Box 
+              component="img" 
+              src="/logo.svg" 
+              alt="ScaleDM Logo"
+              sx={{ height: 22, width: "auto" }}
+              className="drop-shadow-sm"
+            />
+            <Typography 
+              variant="caption" 
+              sx={{ 
+                fontWeight: 700,
+                textTransform: "uppercase",
+                letterSpacing: 1,
+                color: "#6b7280",
+                fontSize: "0.75rem"
+              }}
+            >
+              Powered by ScaleDM
+            </Typography>
+          </Box>
+        </Box>
+      </Box>
+    )}
+  </AnimatePresence>
+);
 
 const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
   width = "100%",
@@ -1002,6 +1091,12 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
         </AnimatePresence>
         </Box>
       </Box>
+      
+      {/* ScaleDM Upsell Overlay */}
+      <ScaleDMUpsellOverlay 
+        show={state.showScaleDMUpsell} 
+        onClose={() => updateState({ showScaleDMUpsell: false })} 
+      />
     </Box>
   );
 };
