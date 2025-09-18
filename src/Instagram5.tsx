@@ -437,7 +437,7 @@ const CommentsPanel: React.FC<{
                       <Typography variant="body2" sx={{ fontWeight: 700, fontSize: 13 }}>nomnomlife</Typography>
                       <Typography variant="caption" color="text.secondary" sx={{ fontSize: 11 }}>1m</Typography>
                     </Box>
-                    <Typography variant="body2" sx={{ textAlign: "left", mt: 0.25, fontSize: 11 }}>{TYPING_TEXT}</Typography>
+                    <Typography variant="body2" sx={{ textAlign: "left", mt: 0.25, fontSize: 13, fontWeight: 500, color: "#262626" }}>{TYPING_TEXT}</Typography>
                     <Typography variant="caption" color="text.secondary" sx={{ mt: 0.25, cursor: "pointer", textAlign: "left", display: "block", fontSize: 11 }}>Reply</Typography>
                   </Box>
                   <Box sx={{ color: "text.secondary" }}>
@@ -525,49 +525,69 @@ const ScaleDMUpsellOverlay: React.FC<{
       >
         <Box
           component={motion.div}
-          initial={{ scale: 0.98, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.98, opacity: 0 }}
-          transition={{ duration: 0.25 }}
+          initial={{ scale: 0.95, opacity: 0, y: 20 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          exit={{ scale: 0.95, opacity: 0, y: 20 }}
+          transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
           onClick={(e) => e.stopPropagation()}
           sx={{
             position: "relative",
             ...HARDWARE_ACCELERATION_STYLES
           }}
-          className="bg-white rounded-2xl shadow-2xl px-5 py-6 sm:px-6 sm:py-7 w-[92%] text-center"
+          className="bg-white rounded-3xl shadow-2xl px-6 py-8 sm:px-8 sm:py-10 w-[95%] max-w-sm text-center"
         >
-          <Box 
-            sx={{ 
-              position: "absolute", 
-              top: 0, 
-              left: 0, 
-              right: 0, 
-              height: 4, 
-              background: (theme) => theme.palette.primary.main,
-              borderRadius: "8px 8px 0 0"
-            }} 
-          />
-
-          {/* Primary message first */}
+          {/* Emoji header */}
           <Typography 
-            variant="h6"
             sx={{ 
-              fontWeight: 800, 
-              mb: 1.5, 
-              letterSpacing: -0.2,
-              color: "#1a1a1a",
-              fontSize: { xs: "1.05rem", sm: "1.1rem" }
+              fontSize: { xs: "2rem", sm: "2.5rem" },
+              mb: 2,
+              filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))"
             }}
           >
-            Auto send DM to anyone who engages with your content
+            🚀💬
           </Typography>
 
-          <Box className="mx-auto mt-4 flex items-center justify-center gap-2">
+          {/* Main headline with gradient */}
+          <Typography 
+            variant="h4"
+            sx={{ 
+              fontWeight: 900, 
+              mb: 2.5,
+              letterSpacing: -0.5,
+              background: "linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)",
+              backgroundClip: "text",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              fontSize: { xs: "1.4rem", sm: "1.6rem" },
+              lineHeight: 1.2
+            }}
+          >
+            Auto-DM links to your audience
+          </Typography>
+
+          {/* Benefit points */}
+          <Box sx={{ mb: 4 }}>
+            <Typography 
+              variant="body1"
+              sx={{ 
+                color: "#616161",
+                fontSize: { xs: "0.9rem", sm: "1rem" },
+                mb: 1.5,
+                fontWeight: 500
+              }}
+            >
+              ✨ Never miss customers<br/>
+              ⚡ Instant responses<br/>
+              💰 Comments → Sales
+            </Typography>
+          </Box>
+
+          <Box className="mx-auto flex items-center justify-center gap-2">
             <Box 
               component="img" 
               src="/logo.svg" 
               alt="ScaleDM Logo"
-              sx={{ height: 18, width: "auto" }}
+              sx={{ height: 20, width: "auto" }}
               className="drop-shadow-sm"
             />
             <Typography 
@@ -576,8 +596,8 @@ const ScaleDMUpsellOverlay: React.FC<{
                 fontWeight: 700,
                 textTransform: "uppercase",
                 letterSpacing: 0.6,
-                color: "#6b7280",
-                fontSize: "0.7rem"
+                color: "#757575",
+                fontSize: "0.75rem"
               }}
             >
               Powered by ScaleDM
@@ -692,14 +712,14 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
             position: 'relative',
             // Add subtle shadow for depth
             boxShadow: { xs: 'none', sm: '0 10px 40px rgba(0,0,0,0.08)' },
-            borderRadius: { xs: 0, sm: 2 }
+            borderRadius: 0
           }}>
         <Box 
           sx={{ 
           width: "100%", 
           height: "100%", 
           bgcolor: "white", 
-          borderRadius: { xs: 0, sm: 1.5 }, 
+          borderRadius: 0, 
           display: "flex", 
           flexDirection: "column", 
           border: { xs: "none", sm: (t) => `1px solid ${t.palette.divider}` },
@@ -1090,9 +1110,9 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
                           A sophisticated sky-blue satin dress with a soft sheen, elegant drape, and a flattering fit—made to turn heads.
                         </Typography>
                         <Box sx={{ mt: 1.5, p: 1.5, bgcolor: "#f8f8f8", borderRadius: 1 }}>
-                          <Typography variant="body2" sx={{ fontWeight: 700, fontSize: "0.8rem", mb: 0.5 }}>Features:</Typography>
+                          <Typography variant="body2" sx={{ fontWeight: 700, fontSize: "0.8rem", mb: 0.5 }}>Highlights:</Typography>
                           <Typography variant="caption" sx={{ fontSize: "0.7rem", color: "#666", lineHeight: 1.3 }}>
-                            • Silky satin finish • Sky-blue hue • Adjustable straps • Subtle side slit • Hidden zipper
+                            • Best seller • Great value • Trusted by customers • Fast delivery
                           </Typography>
                         </Box>
                       </Box>
