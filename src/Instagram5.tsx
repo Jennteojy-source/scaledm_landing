@@ -4,9 +4,12 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { motion, AnimatePresence } from "framer-motion";
 
+type AspectRatio = '1:1' | '4:5' | '9:16';
+
 interface InstagramInteractionDemoProps {
   width?: number | string;
   height?: number | string;
+  aspectRatio?: AspectRatio;
 }
 
 const ANIMATION_TIMINGS = {
@@ -80,6 +83,20 @@ const IOS_TAP_SCALE = {
 } as const;
 
 const TYPING_TEXT = "LINK";
+
+// Function to get dimensions based on aspect ratio
+const getAspectRatioDimensions = (aspectRatio: AspectRatio, baseSize: number = 540) => {
+  switch (aspectRatio) {
+    case '1:1':
+      return { width: baseSize, height: baseSize };
+    case '4:5':
+      return { width: baseSize, height: Math.round(baseSize * 1.25) };
+    case '9:16':
+      return { width: baseSize, height: Math.round(baseSize * 1.78) };
+    default:
+      return { width: baseSize, height: baseSize };
+  }
+};
 
 // Video script text content
 const VIDEO_SCRIPT = {
@@ -713,8 +730,10 @@ const ScaleDMUpsellOverlay: React.FC<{
 const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
   width = "100%",
   height = "100%",
+  aspectRatio = '1:1',
 }) => {
   const { state, startComments, updateState, isPaused, togglePause, resetAnimation } = useDemoAnimation();
+  const [currentAspectRatio, setCurrentAspectRatio] = useState<AspectRatio>(aspectRatio);
   const handleDmCTAClick = useCallback(() => {
     updateState({ showWebsite: true });
   }, [updateState]);
@@ -742,6 +761,7 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
       {/* Control Panel - Outside the animation */}
       <Box sx={{ 
         display: "flex", 
+        flexDirection: "column",
         gap: 1, 
         alignItems: "center",
         position: "absolute",
@@ -753,67 +773,97 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
         borderRadius: 1,
         boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
       }}>
-        <button
-          onClick={startComments}
-          disabled={state.phase !== "idle"}
-          style={{
-            padding: "6px 12px",
-            backgroundColor: state.phase === "idle" ? "#28a745" : "#6c757d",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: state.phase === "idle" ? "pointer" : "not-allowed",
-            fontSize: "12px",
-            fontWeight: "bold",
-            opacity: state.phase === "idle" ? 1 : 0.6
-          }}
-        >
-          ▶ Start
-        </button>
-        <button
-          onClick={togglePause}
-          disabled={state.phase === "idle"}
-          style={{
-            padding: "6px 12px",
-            backgroundColor: isPaused ? "#28a745" : "#ffc107",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: state.phase !== "idle" ? "pointer" : "not-allowed",
-            fontSize: "12px",
-            fontWeight: "bold",
-            opacity: state.phase !== "idle" ? 1 : 0.6
-          }}
-        >
-          {isPaused ? "▶ Resume" : "⏸ Pause"}
-        </button>
-        <button
-          onClick={resetAnimation}
-          style={{
-            padding: "6px 12px",
-            backgroundColor: "#6c757d",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontSize: "12px",
-            fontWeight: "bold"
-          }}
-        >
-          🔄 Reset
-        </button>
+        {/* Animation Controls */}
+        <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+          <button
+            onClick={startComments}
+            disabled={state.phase !== "idle"}
+            style={{
+              padding: "6px 12px",
+              backgroundColor: state.phase === "idle" ? "#28a745" : "#6c757d",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: state.phase === "idle" ? "pointer" : "not-allowed",
+              fontSize: "12px",
+              fontWeight: "bold",
+              opacity: state.phase === "idle" ? 1 : 0.6
+            }}
+          >
+            ▶ Start
+          </button>
+          <button
+            onClick={togglePause}
+            disabled={state.phase === "idle"}
+            style={{
+              padding: "6px 12px",
+              backgroundColor: isPaused ? "#28a745" : "#ffc107",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: state.phase !== "idle" ? "pointer" : "not-allowed",
+              fontSize: "12px",
+              fontWeight: "bold",
+              opacity: state.phase !== "idle" ? 1 : 0.6
+            }}
+          >
+            {isPaused ? "▶ Resume" : "⏸ Pause"}
+          </button>
+          <button
+            onClick={resetAnimation}
+            style={{
+              padding: "6px 12px",
+              backgroundColor: "#6c757d",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontSize: "12px",
+              fontWeight: "bold"
+            }}
+          >
+            🔄 Reset
+          </button>
+        </Box>
+        
+        {/* Aspect Ratio Controls */}
+        <Box sx={{ display: "flex", gap: 0.5, alignItems: "center" }}>
+          <Typography variant="caption" sx={{ fontSize: "10px", fontWeight: "bold", color: "#666" }}>
+            Ratio:
+          </Typography>
+          {(['1:1', '4:5', '9:16'] as AspectRatio[]).map((ratio) => (
+            <button
+              key={ratio}
+              onClick={() => setCurrentAspectRatio(ratio)}
+              style={{
+                padding: "4px 8px",
+                backgroundColor: currentAspectRatio === ratio ? "#1976d2" : "#e0e0e0",
+                color: currentAspectRatio === ratio ? "white" : "#666",
+                border: "none",
+                borderRadius: "3px",
+                cursor: "pointer",
+                fontSize: "10px",
+                fontWeight: "bold",
+                minWidth: "35px"
+              }}
+            >
+              {ratio}
+            </button>
+          ))}
+        </Box>
       </Box>
-      {/* Fixed 1:1 ratio: square dimensions for demo */}
+      {/* Dynamic aspect ratio container */}
           <Box sx={{ 
-            width: '540px',
-            height: '540px',
+            width: `${getAspectRatioDimensions(currentAspectRatio).width}px`,
+            height: `${getAspectRatioDimensions(currentAspectRatio).height}px`,
             display: 'flex',
             margin: 'auto',
             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
             position: 'relative',
             // Add subtle shadow for depth
             boxShadow: { xs: 'none', sm: '0 10px 40px rgba(0,0,0,0.08)' },
-            borderRadius: 0
+            borderRadius: 0,
+            transition: 'width 0.3s ease, height 0.3s ease'
           }}>
         <Box 
           sx={{ 
