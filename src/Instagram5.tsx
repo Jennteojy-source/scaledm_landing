@@ -13,30 +13,30 @@ interface InstagramInteractionDemoProps {
 }
 
 const ANIMATION_TIMINGS = {
-  AUTO_START_DELAY: 1500,  // Faster start
-  INTRO_DISPLAY_DURATION: 4500,  // Extended for better impact
-  INTRO_TRANSITION_DELAY: 1000,  // Reduced from 2000ms
-  TAP_ANIMATION_DURATION: 150,  // Faster tap feedback
-  SHEET_OPEN_DELAY: 80,  // Faster sheet response
-  TYPING_START_DELAY: 300,  // Faster typing start
-  TYPING_CHAR_DELAY: 60,  // Faster typing speed (was 80ms)
-  FADE_OUT_DELAY: 200,  // Faster fade
-  SUBMITTED_DELAY: 300,  // Faster submitted state
-  NOTIFICATION_DELAY: 400,  // Earlier notification
-  NOTIFICATION_DURATION: 2000,  // Reduced from 3000ms
-  NOTIFICATION_CLICK_DELAY: 400,  // Faster notification click
+  AUTO_START_DELAY: 1000,  // Comfortable start
+  INTRO_DISPLAY_DURATION: 5000,  // Extended intro for better impact
+  INTRO_TRANSITION_DELAY: 1500,  // Pause before demo
+  TAP_ANIMATION_DURATION: 300,  // More visible tap feedback
+  SHEET_OPEN_DELAY: 120,  // More natural sheet response
+  TYPING_START_DELAY: 500,  // Pause before typing
+  TYPING_CHAR_DELAY: 200,  // More readable typing speed
+  FADE_OUT_DELAY: 400,  // More visible fade
+  SUBMITTED_DELAY: 600,  // Pause to see submitted state
+  NOTIFICATION_DELAY: 600,  // More natural notification timing
+  NOTIFICATION_DURATION: 1000,  // Longer notification display
+  NOTIFICATION_CLICK_DELAY: 500,  // More natural click timing
   // Notification should appear after the comment visibly renders
-  COMMENT_APPEAR_DELAY: 100,  // Faster comment appear
-  COMMENT_APPEAR_ANIM_DURATION: 200,  // Faster animation
-  NOTIFICATION_AFTER_COMMENT_DELAY: 400,  // Reduced delay
-  DM_PULSE_DELAY: 800,  // Faster DM pulse start
-  DM_PULSE_DURATION: 600,  // Shorter pulse duration
-  DM_CLICK_FLASH_DELAY: 400,  // Faster click flash
-  DM_CLICK_FLASH_DURATION: 200,  // Shorter flash
-  WEBSITE_OPEN_DELAY: 300,  // Faster website open
-  WEBSITE_DISPLAY_DURATION: 2500,  // Reduced from 4000ms
-  SCALEDM_UPSELL_DISPLAY_DURATION: 4000,  // Extended for better conversion
-  RESTART_DELAY: 800,  // Faster restart
+  COMMENT_APPEAR_DELAY: 200,  // More visible comment appear
+  COMMENT_APPEAR_ANIM_DURATION: 400,  // Smoother animation
+  NOTIFICATION_AFTER_COMMENT_DELAY: 800,  // More natural delay
+  DM_PULSE_DELAY: 500,  // More visible DM pulse
+  DM_PULSE_DURATION: 500,  // Longer pulse duration
+  DM_CLICK_FLASH_DELAY: 600,  // More visible click flash
+  DM_CLICK_FLASH_DURATION: 300,  // Longer flash
+  WEBSITE_OPEN_DELAY: 500,  // More natural website open
+  WEBSITE_DISPLAY_DURATION: 4000,  // Longer website display
+  SCALEDM_UPSELL_DISPLAY_DURATION: 5000,  // Extended upsell for conversion
+  RESTART_DELAY: 1000,  // More natural restart
 } as const;
 
 const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
@@ -280,7 +280,7 @@ const useDemoAnimation = () => {
   // Show ScaleDM upsell after website loads
   addTimeout(() => {
     updateState({ showScaleDMUpsell: true });
-  }, ANIMATION_TIMINGS.DM_PULSE_DELAY + ANIMATION_TIMINGS.DM_PULSE_DURATION + ANIMATION_TIMINGS.WEBSITE_OPEN_DELAY + 1000); // Reduced from 2000ms
+  }, ANIMATION_TIMINGS.DM_PULSE_DELAY + ANIMATION_TIMINGS.DM_PULSE_DURATION + ANIMATION_TIMINGS.WEBSITE_OPEN_DELAY + 1500); // Extended for better pacing
   // Animation stops at upsell - no automatic restart
   }, [state.phase, state.iteration, addTimeout, updateState, startComments]);
 
@@ -643,84 +643,105 @@ const ScaleDMUpsellOverlay: React.FC<{
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.25 }}
+        transition={{ duration: 0.5 }}
         sx={{
           position: "absolute",
           inset: 0,
-          zIndex: 50,
+          zIndex: 100,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          p: 2,
+          p: 3,
+          background: "linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.9) 100%)",
           borderRadius: "inherit",
           ...HARDWARE_ACCELERATION_STYLES
         }}
-        className="bg-black/60"
         onClick={onClose}
       >
-        <Box
-          component={motion.div}
-          initial={{ scale: 0.95, opacity: 0, y: 20 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
-          exit={{ scale: 0.95, opacity: 0, y: 20 }}
-          transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
-          onClick={(e) => e.stopPropagation()}
-          sx={{
-            position: "relative",
-            ...HARDWARE_ACCELERATION_STYLES
-          }}
-          className="bg-white rounded-3xl shadow-2xl px-6 py-8 sm:px-8 sm:py-10 w-[95%] max-w-sm text-center"
-        >
-          {/* Emoji header */}
-          <Typography 
-            sx={{ 
-              fontSize: { xs: "2rem", sm: "2.5rem" },
-              mb: 2,
-              filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.1))"
-            }}
+        <Box sx={{ textAlign: "center", color: "white", maxWidth: "90%" }}>
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.8 }}
           >
-            🚀💬
-          </Typography>
-
-          {/* Main headline with gradient */}
-          <Typography 
-            variant="h4"
-            sx={{ 
-              fontWeight: 900, 
-              mb: 2.5,
-              letterSpacing: -0.5,
-              background: "linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)",
-              backgroundClip: "text",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              fontSize: { xs: "1.4rem", sm: "1.6rem" },
-              lineHeight: 1.2
-            }}
-          >
-            Set up your comment-to-DM automation with ScaleDM 100% free in under 30 seconds
-          </Typography>
-
-          {/* Arrow pointing down */}
-          <Box sx={{ mb: 3 }}>
-            <Box
-              component={motion.div}
-              animate={{ 
-                y: [0, 8, 0],
-              }}
-              transition={{ 
-                duration: 1.5,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-              sx={{
-                fontSize: "2rem",
-                color: "#1976d2",
-                fontWeight: "bold"
+            <Typography 
+              sx={{ 
+                fontSize: { xs: "3rem", sm: "4rem" },
+                mb: 2,
+                filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.3))"
               }}
             >
-              ↓
+              🚀💬
+            </Typography>
+          </motion.div>
+          
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.8, duration: 0.8 }}
+          >
+            <Typography 
+              variant="h4" 
+              sx={{ 
+                fontWeight: 800, 
+                mb: 3,
+                fontSize: { xs: "1.5rem", sm: "2rem" },
+                lineHeight: 1.2,
+                textShadow: "0 2px 4px rgba(0,0,0,0.3)"
+              }}
+            >
+              Ready to automate your Instagram DMs?
+            </Typography>
+          </motion.div>
+
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 1.3, duration: 0.8 }}
+          >
+            <Typography 
+              variant="h6" 
+              sx={{ 
+                fontWeight: 600, 
+                mb: 4,
+                fontSize: { xs: "1rem", sm: "1.25rem" },
+                lineHeight: 1.4,
+                color: "#4caf50",
+                textShadow: "0 1px 2px rgba(0,0,0,0.3)"
+              }}
+            >
+              Set up your comment-to-DM automation with ScaleDM 100% free in under 30 seconds
+            </Typography>
+          </motion.div>
+
+
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 2.0, duration: 0.8 }}
+          >
+            <Box sx={{ mt: 3 }}>
+              <Box
+                component={motion.div}
+                animate={{ 
+                  y: [0, 8, 0],
+                }}
+                transition={{ 
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+                sx={{
+                  fontSize: "2rem",
+                  color: "#42a5f5",
+                  fontWeight: "bold",
+                  textShadow: "0 2px 4px rgba(0,0,0,0.3)"
+                }}
+              >
+                ↓
+              </Box>
             </Box>
-          </Box>
+          </motion.div>
         </Box>
       </Box>
     )}
