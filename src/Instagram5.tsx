@@ -13,30 +13,30 @@ interface InstagramInteractionDemoProps {
 }
 
 const ANIMATION_TIMINGS = {
-  AUTO_START_DELAY: 2200,
-  INTRO_DISPLAY_DURATION: 5500,  // Show intro text longer - slowed down
-  INTRO_TRANSITION_DELAY: 2000,  // Longer pause before starting demo
-  TAP_ANIMATION_DURATION: 200,  // Faster tap feedback duration
-  SHEET_OPEN_DELAY: 120,  // Faster sheet response
-  TYPING_START_DELAY: 600,  // Faster typing start
-  TYPING_CHAR_DELAY: 80,  // Faster typing speed
-  FADE_OUT_DELAY: 400,
-  SUBMITTED_DELAY: 600,
-  NOTIFICATION_DELAY: 800,  // Earlier notification
-  NOTIFICATION_DURATION: 3000,
-  NOTIFICATION_CLICK_DELAY: 600,  // Faster notification click
+  AUTO_START_DELAY: 1500,  // Faster start
+  INTRO_DISPLAY_DURATION: 4500,  // Extended for better impact
+  INTRO_TRANSITION_DELAY: 1000,  // Reduced from 2000ms
+  TAP_ANIMATION_DURATION: 150,  // Faster tap feedback
+  SHEET_OPEN_DELAY: 80,  // Faster sheet response
+  TYPING_START_DELAY: 300,  // Faster typing start
+  TYPING_CHAR_DELAY: 60,  // Faster typing speed (was 80ms)
+  FADE_OUT_DELAY: 200,  // Faster fade
+  SUBMITTED_DELAY: 300,  // Faster submitted state
+  NOTIFICATION_DELAY: 400,  // Earlier notification
+  NOTIFICATION_DURATION: 2000,  // Reduced from 3000ms
+  NOTIFICATION_CLICK_DELAY: 400,  // Faster notification click
   // Notification should appear after the comment visibly renders
-  COMMENT_APPEAR_DELAY: 150,
-  COMMENT_APPEAR_ANIM_DURATION: 300,
-  NOTIFICATION_AFTER_COMMENT_DELAY: 700,
-  DM_PULSE_DELAY: 1800,
-  DM_PULSE_DURATION: 1000,
-  DM_CLICK_FLASH_DELAY: 700,
-  DM_CLICK_FLASH_DURATION: 250,
-  WEBSITE_OPEN_DELAY: 600,
-  WEBSITE_DISPLAY_DURATION: 4000,
-  SCALEDM_UPSELL_DISPLAY_DURATION: 4000,
-  RESTART_DELAY: 1200,
+  COMMENT_APPEAR_DELAY: 100,  // Faster comment appear
+  COMMENT_APPEAR_ANIM_DURATION: 200,  // Faster animation
+  NOTIFICATION_AFTER_COMMENT_DELAY: 400,  // Reduced delay
+  DM_PULSE_DELAY: 800,  // Faster DM pulse start
+  DM_PULSE_DURATION: 600,  // Shorter pulse duration
+  DM_CLICK_FLASH_DELAY: 400,  // Faster click flash
+  DM_CLICK_FLASH_DURATION: 200,  // Shorter flash
+  WEBSITE_OPEN_DELAY: 300,  // Faster website open
+  WEBSITE_DISPLAY_DURATION: 2500,  // Reduced from 4000ms
+  SCALEDM_UPSELL_DISPLAY_DURATION: 4000,  // Extended for better conversion
+  RESTART_DELAY: 800,  // Faster restart
 } as const;
 
 const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
@@ -104,7 +104,7 @@ const VIDEO_SCRIPT = {
     question: "Are you an IG creator or business?",
     problem: "Can't share links on your IG posts? Losing traffic to your website? 💸"
   },
-  solution: "automatically DM your link to every commenter 🚀",
+  solution: "Automatically DM your link to every commenter 🚀",
   cta: "Sign up with ScaleDM to get started for free"
 };
 
@@ -280,7 +280,7 @@ const useDemoAnimation = () => {
   // Show ScaleDM upsell after website loads
   addTimeout(() => {
     updateState({ showScaleDMUpsell: true });
-  }, ANIMATION_TIMINGS.DM_PULSE_DELAY + ANIMATION_TIMINGS.DM_PULSE_DURATION + ANIMATION_TIMINGS.WEBSITE_OPEN_DELAY + 2000);
+  }, ANIMATION_TIMINGS.DM_PULSE_DELAY + ANIMATION_TIMINGS.DM_PULSE_DURATION + ANIMATION_TIMINGS.WEBSITE_OPEN_DELAY + 1000); // Reduced from 2000ms
   // Animation stops at upsell - no automatic restart
   }, [state.phase, state.iteration, addTimeout, updateState, startComments]);
 
