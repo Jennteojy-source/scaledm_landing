@@ -11,37 +11,39 @@ interface InstagramInteractionDemoProps {
 
 const ANIMATION_TIMINGS = {
   AUTO_START_DELAY: 2200,
-  TAP_ANIMATION_DURATION: 320,  // iOS tap feedback duration
-  SHEET_OPEN_DELAY: 180,  // Slightly slower sheet response
-  TYPING_START_DELAY: 900,  // More natural typing delay
-  TYPING_CHAR_DELAY: 100,  // Slightly slower typing speed
-  FADE_OUT_DELAY: 550,
-  SUBMITTED_DELAY: 800,
-  NOTIFICATION_DELAY: 1000,  // Slightly later notification
-  NOTIFICATION_DURATION: 3500,
-  NOTIFICATION_CLICK_DELAY: 750,
+  INTRO_DISPLAY_DURATION: 5500,  // Show intro text longer - slowed down
+  INTRO_TRANSITION_DELAY: 2000,  // Longer pause before starting demo
+  TAP_ANIMATION_DURATION: 200,  // Faster tap feedback duration
+  SHEET_OPEN_DELAY: 120,  // Faster sheet response
+  TYPING_START_DELAY: 600,  // Faster typing start
+  TYPING_CHAR_DELAY: 80,  // Faster typing speed
+  FADE_OUT_DELAY: 400,
+  SUBMITTED_DELAY: 600,
+  NOTIFICATION_DELAY: 800,  // Earlier notification
+  NOTIFICATION_DURATION: 3000,
+  NOTIFICATION_CLICK_DELAY: 600,  // Faster notification click
   // Notification should appear after the comment visibly renders
-  COMMENT_APPEAR_DELAY: 200,
-  COMMENT_APPEAR_ANIM_DURATION: 350,
-  NOTIFICATION_AFTER_COMMENT_DELAY: 900,
-  DM_PULSE_DELAY: 2200,
-  DM_PULSE_DURATION: 1200,
-  DM_CLICK_FLASH_DELAY: 900,
-  DM_CLICK_FLASH_DURATION: 300,
-  WEBSITE_OPEN_DELAY: 800,
-  WEBSITE_DISPLAY_DURATION: 5200,
-  SCALEDM_UPSELL_DISPLAY_DURATION: 5000,
-  RESTART_DELAY: 1600,
+  COMMENT_APPEAR_DELAY: 150,
+  COMMENT_APPEAR_ANIM_DURATION: 300,
+  NOTIFICATION_AFTER_COMMENT_DELAY: 700,
+  DM_PULSE_DELAY: 1800,
+  DM_PULSE_DURATION: 1000,
+  DM_CLICK_FLASH_DELAY: 700,
+  DM_CLICK_FLASH_DURATION: 250,
+  WEBSITE_OPEN_DELAY: 600,
+  WEBSITE_DISPLAY_DURATION: 4000,
+  SCALEDM_UPSELL_DISPLAY_DURATION: 4000,
+  RESTART_DELAY: 1200,
 } as const;
 
 const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 const MOBILE_ANIMATION_TIMINGS = {
   ...ANIMATION_TIMINGS,
   TYPING_CHAR_DELAY: isMobile 
-    ? Math.max(ANIMATION_TIMINGS.TYPING_CHAR_DELAY - 10, 70)
+    ? Math.max(ANIMATION_TIMINGS.TYPING_CHAR_DELAY - 10, 60)
     : ANIMATION_TIMINGS.TYPING_CHAR_DELAY,
   TAP_ANIMATION_DURATION: isMobile 
-    ? Math.max(ANIMATION_TIMINGS.TAP_ANIMATION_DURATION - 40, 180)
+    ? Math.max(ANIMATION_TIMINGS.TAP_ANIMATION_DURATION - 20, 150)
     : ANIMATION_TIMINGS.TAP_ANIMATION_DURATION,
 };
 
@@ -79,6 +81,16 @@ const IOS_TAP_SCALE = {
 
 const TYPING_TEXT = "LINK";
 
+// Video script text content
+const VIDEO_SCRIPT = {
+  intro: {
+    question: "Are you an IG creator or business?",
+    problem: "Can't share links on your IG posts? Losing traffic to your website? 💸"
+  },
+  solution: "automatically DM your link to every commenter 🚀",
+  cta: "Sign up with ScaleDM to get started for free"
+};
+
 // Instagram-style icons - exact replicas
 
 const InstagramCommentIcon = () => (
@@ -99,7 +111,7 @@ const InstagramBookmarkIcon = () => (
   </svg>
 );
 
-type DemoPhase = "idle" | "openSheet" | "typing" | "fadeOut" | "submitted" | "dm";
+type DemoPhase = "idle" | "intro" | "openSheet" | "typing" | "fadeOut" | "submitted" | "dm";
 
 interface DemoState {
   typed: string;
@@ -176,14 +188,21 @@ const useDemoAnimation = () => {
       });
       return;
     }
-    updateState({ typed: "", commentIconTapAnim: true });
+    
+    // Start with intro phase
+    updateState({ phase: "intro" });
+    
+    // After intro, start the demo
+    addTimeout(() => {
+      updateState({ typed: "", commentIconTapAnim: true });
+    }, ANIMATION_TIMINGS.INTRO_DISPLAY_DURATION);
     addTimeout(() => {
       updateState({ commentIconTapAnim: false });
       // Small delay before sheet opens for more natural feel
       addTimeout(() => {
         updateState({ phase: "openSheet" });
       }, 50);
-    }, ANIMATION_TIMINGS.TAP_ANIMATION_DURATION);
+    }, ANIMATION_TIMINGS.INTRO_DISPLAY_DURATION + ANIMATION_TIMINGS.TAP_ANIMATION_DURATION);
     addTimeout(() => {
       updateState({ phase: "typing" });
       let charIndex = 0;
@@ -209,7 +228,7 @@ const useDemoAnimation = () => {
         }
       };
       typeNextChar();
-    }, ANIMATION_TIMINGS.TYPING_START_DELAY);
+    }, ANIMATION_TIMINGS.INTRO_DISPLAY_DURATION + ANIMATION_TIMINGS.TYPING_START_DELAY);
   }, [addTimeout, clearAllAnimations, updateState, isPaused]);
 
   const handleNotification = useCallback(() => {
@@ -296,6 +315,105 @@ const useDemoAnimation = () => {
     resetAnimation,
   };
 };
+
+const IntroOverlay: React.FC<{
+  show: boolean;
+  phase: DemoPhase;
+}> = ({ show, phase }) => (
+  <AnimatePresence>
+    {show && phase === "intro" && (
+      <Box
+        component={motion.div}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.5 }}
+        sx={{
+          position: "absolute",
+          inset: 0,
+          zIndex: 100,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          p: 3,
+          background: "linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.9) 100%)",
+          borderRadius: "inherit",
+          ...HARDWARE_ACCELERATION_STYLES
+        }}
+      >
+        <Box sx={{ textAlign: "center", color: "white", maxWidth: "90%" }}>
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.8 }}
+          >
+            <Typography 
+              variant="h4" 
+              sx={{ 
+                fontWeight: 800, 
+                mb: 3,
+                fontSize: { xs: "1.5rem", sm: "2rem" },
+                lineHeight: 1.2,
+                textShadow: "0 2px 4px rgba(0,0,0,0.3)"
+              }}
+            >
+              {VIDEO_SCRIPT.intro.question}
+            </Typography>
+          </motion.div>
+          
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 1.2, duration: 0.8 }}
+          >
+            <Typography 
+              variant="h6" 
+              sx={{ 
+                fontWeight: 600, 
+                mb: 4,
+                fontSize: { xs: "1rem", sm: "1.25rem" },
+                lineHeight: 1.4,
+                color: "#ffeb3b",
+                textShadow: "0 1px 2px rgba(0,0,0,0.3)"
+              }}
+            >
+              {VIDEO_SCRIPT.intro.problem}
+            </Typography>
+          </motion.div>
+
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 2.0, duration: 0.8 }}
+          >
+            <Box sx={{ 
+              display: "inline-flex", 
+              alignItems: "center", 
+              gap: 1,
+              px: 3, 
+              py: 1.5, 
+              bgcolor: "rgba(255,255,255,0.1)",
+              borderRadius: 2,
+              border: "2px solid rgba(255,255,255,0.2)",
+              backdropFilter: "blur(10px)"
+            }}>
+              <Typography 
+                variant="h6" 
+                sx={{ 
+                  fontWeight: 700,
+                  fontSize: { xs: "1rem", sm: "1.1rem" },
+                  color: "#4caf50"
+                }}
+              >
+                {VIDEO_SCRIPT.solution}
+              </Typography>
+            </Box>
+          </motion.div>
+        </Box>
+      </Box>
+    )}
+  </AnimatePresence>
+);
 
 const NotificationBanner: React.FC<{
   show: boolean;
@@ -562,46 +680,29 @@ const ScaleDMUpsellOverlay: React.FC<{
               lineHeight: 1.2
             }}
           >
-            Auto-DM links to your audience
+            Set up your comment-to-DM automation with ScaleDM 100% free in under 30 seconds
           </Typography>
 
-          {/* Benefit points */}
-          <Box sx={{ mb: 4 }}>
-            <Typography 
-              variant="body1"
-              sx={{ 
-                color: "#616161",
-                fontSize: { xs: "0.9rem", sm: "1rem" },
-                mb: 1.5,
-                fontWeight: 500
+          {/* Arrow pointing down */}
+          <Box sx={{ mb: 3 }}>
+            <Box
+              component={motion.div}
+              animate={{ 
+                y: [0, 8, 0],
+              }}
+              transition={{ 
+                duration: 1.5,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              sx={{
+                fontSize: "2rem",
+                color: "#1976d2",
+                fontWeight: "bold"
               }}
             >
-              ✨ Never miss customers<br/>
-              ⚡ Instant responses<br/>
-              💰 Comments → Sales
-            </Typography>
-          </Box>
-
-          <Box className="mx-auto flex items-center justify-center gap-2">
-            <Box 
-              component="img" 
-              src="/logo.svg" 
-              alt="ScaleDM Logo"
-              sx={{ height: 20, width: "auto" }}
-              className="drop-shadow-sm"
-            />
-            <Typography 
-              variant="caption" 
-              sx={{ 
-                fontWeight: 700,
-                textTransform: "uppercase",
-                letterSpacing: 0.6,
-                color: "#757575",
-                fontSize: "0.75rem"
-              }}
-            >
-              Powered by ScaleDM
-            </Typography>
+              ↓
+            </Box>
           </Box>
         </Box>
       </Box>
@@ -702,10 +803,10 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
           🔄 Reset
         </button>
       </Box>
-      {/* Fixed 4:5 ratio: larger dimensions for demo */}
+      {/* Fixed 1:1 ratio: square dimensions for demo */}
           <Box sx={{ 
-            width: '360px',
-            height: '640px',
+            width: '540px',
+            height: '540px',
             display: 'flex',
             margin: 'auto',
             fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
@@ -886,7 +987,7 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
               textAlign: "left",
               lineHeight: 1.4
             }}>
-              Comment <Box component="span" sx={{ fontWeight: 600 }}>{TYPING_TEXT}</Box> and I'll DM you a link to get this outfit!
+              Comment <Box component="span" sx={{ fontWeight: 600 }}>{TYPING_TEXT}</Box> and I'll automatically DM you the link to get this outfit! 🛍️
             </Typography>
           </Box>
           <Typography variant="caption" sx={{ 
@@ -1124,6 +1225,12 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
           )}
         </AnimatePresence>
         </Box>
+        {/* Intro Overlay */}
+        <IntroOverlay 
+          show={state.phase === "intro"} 
+          phase={state.phase}
+        />
+        
         {/* ScaleDM Upsell Overlay (inside frame) */}
         <ScaleDMUpsellOverlay 
           show={state.showScaleDMUpsell} 
