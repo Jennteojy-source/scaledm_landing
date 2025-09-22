@@ -15,25 +15,26 @@ interface InstagramInteractionDemoProps {
 const ANIMATION_TIMINGS = {
   AUTO_START_DELAY: 1000,  // Comfortable start
   INTRO_DISPLAY_DURATION: 5000,  // Extended intro for better impact
+  POST_PREVIEW_DURATION: 2500,  // Show raw post briefly before animation
   INTRO_TRANSITION_DELAY: 1500,  // Pause before demo
-  TAP_ANIMATION_DURATION: 300,  // More visible tap feedback
-  SHEET_OPEN_DELAY: 120,  // More natural sheet response
-  TYPING_START_DELAY: 500,  // Pause before typing
-  TYPING_CHAR_DELAY: 200,  // More readable typing speed
-  FADE_OUT_DELAY: 400,  // More visible fade
-  SUBMITTED_DELAY: 600,  // Pause to see submitted state
-  NOTIFICATION_DELAY: 600,  // More natural notification timing
-  NOTIFICATION_DURATION: 1000,  // Longer notification display
-  NOTIFICATION_CLICK_DELAY: 500,  // More natural click timing
+  TAP_ANIMATION_DURATION: 400,  // More visible tap feedback
+  SHEET_OPEN_DELAY: 200,  // More natural sheet response
+  TYPING_START_DELAY: 800,  // Longer pause before typing
+  TYPING_CHAR_DELAY: 300,  // Slower, more readable typing speed
+  FADE_OUT_DELAY: 600,  // More visible fade
+  SUBMITTED_DELAY: 800,  // Longer pause to see submitted state
+  NOTIFICATION_DELAY: 800,  // More natural notification timing
+  NOTIFICATION_DURATION: 1500,  // Longer notification display
+  NOTIFICATION_CLICK_DELAY: 700,  // More natural click timing
   // Notification should appear after the comment visibly renders
-  COMMENT_APPEAR_DELAY: 200,  // More visible comment appear
-  COMMENT_APPEAR_ANIM_DURATION: 400,  // Smoother animation
-  NOTIFICATION_AFTER_COMMENT_DELAY: 800,  // More natural delay
-  DM_PULSE_DELAY: 500,  // More visible DM pulse
-  DM_PULSE_DURATION: 500,  // Longer pulse duration
-  DM_CLICK_FLASH_DELAY: 600,  // More visible click flash
-  DM_CLICK_FLASH_DURATION: 300,  // Longer flash
-  WEBSITE_OPEN_DELAY: 500,  // More natural website open
+  COMMENT_APPEAR_DELAY: 300,  // More visible comment appear
+  COMMENT_APPEAR_ANIM_DURATION: 600,  // Smoother animation
+  NOTIFICATION_AFTER_COMMENT_DELAY: 1000,  // Longer delay
+  DM_PULSE_DELAY: 800,  // More visible DM pulse
+  DM_PULSE_DURATION: 800,  // Longer pulse duration
+  DM_CLICK_FLASH_DELAY: 800,  // More visible click flash
+  DM_CLICK_FLASH_DURATION: 400,  // Longer flash
+  WEBSITE_OPEN_DELAY: 800,  // More natural website open
   WEBSITE_DISPLAY_DURATION: 4000,  // Longer website display
   SCALEDM_UPSELL_DISPLAY_DURATION: 5000,  // Extended upsell for conversion
   RESTART_DELAY: 1000,  // More natural restart
@@ -104,7 +105,7 @@ const VIDEO_SCRIPT = {
     question: "Are you an IG creator or business?",
     problem: "Can't share links on your IG posts? Losing traffic to your website? 💸"
   },
-  solution: "Automatically DM your link to every commenter 🚀",
+  solution: "Auto‑DM your links to every commenter with ScaleDM 🚀",
   cta: "Sign up with ScaleDM to get started for free"
 };
 
@@ -128,7 +129,7 @@ const InstagramBookmarkIcon = () => (
   </svg>
 );
 
-type DemoPhase = "idle" | "intro" | "openSheet" | "typing" | "fadeOut" | "submitted" | "dm";
+type DemoPhase = "idle" | "intro" | "preview" | "openSheet" | "typing" | "fadeOut" | "submitted" | "dm";
 
 interface DemoState {
   typed: string;
@@ -209,17 +210,23 @@ const useDemoAnimation = () => {
     // Start with intro phase
     updateState({ phase: "intro" });
     
-    // After intro, start the demo
+    // After intro, briefly show raw post (no overlay) before starting the demo
+    addTimeout(() => {
+      updateState({ phase: "preview" });
+    }, ANIMATION_TIMINGS.INTRO_DISPLAY_DURATION);
+
+    const baseStart = ANIMATION_TIMINGS.INTRO_DISPLAY_DURATION + ANIMATION_TIMINGS.POST_PREVIEW_DURATION;
+
     addTimeout(() => {
       updateState({ typed: "", commentIconTapAnim: true });
-    }, ANIMATION_TIMINGS.INTRO_DISPLAY_DURATION);
+    }, baseStart);
     addTimeout(() => {
       updateState({ commentIconTapAnim: false });
       // Small delay before sheet opens for more natural feel
       addTimeout(() => {
         updateState({ phase: "openSheet" });
       }, 50);
-    }, ANIMATION_TIMINGS.INTRO_DISPLAY_DURATION + ANIMATION_TIMINGS.TAP_ANIMATION_DURATION);
+    }, baseStart + ANIMATION_TIMINGS.TAP_ANIMATION_DURATION);
     addTimeout(() => {
       updateState({ phase: "typing" });
       let charIndex = 0;
@@ -245,7 +252,7 @@ const useDemoAnimation = () => {
         }
       };
       typeNextChar();
-    }, ANIMATION_TIMINGS.INTRO_DISPLAY_DURATION + ANIMATION_TIMINGS.TYPING_START_DELAY);
+    }, baseStart + ANIMATION_TIMINGS.TYPING_START_DELAY);
   }, [addTimeout, clearAllAnimations, updateState, isPaused]);
 
   const handleNotification = useCallback(() => {
@@ -369,9 +376,10 @@ const IntroOverlay: React.FC<{
               sx={{ 
                 fontWeight: 800, 
                 mb: 3,
-                fontSize: { xs: "1.5rem", sm: "2rem" },
+                fontSize: { xs: "1.8rem", sm: "2.4rem" },
                 lineHeight: 1.2,
-                textShadow: "0 2px 4px rgba(0,0,0,0.3)"
+                letterSpacing: 0.2,
+                textShadow: "0 3px 10px rgba(0,0,0,0.45)"
               }}
             >
               {VIDEO_SCRIPT.intro.question}
@@ -388,10 +396,10 @@ const IntroOverlay: React.FC<{
               sx={{ 
                 fontWeight: 600, 
                 mb: 4,
-                fontSize: { xs: "1rem", sm: "1.25rem" },
+                fontSize: { xs: "1.2rem", sm: "1.4rem" },
                 lineHeight: 1.4,
-                color: "#ffeb3b",
-                textShadow: "0 1px 2px rgba(0,0,0,0.3)"
+                color: "rgba(255,255,255,0.9)",
+                textShadow: "0 3px 10px rgba(0,0,0,0.35)"
               }}
             >
               {VIDEO_SCRIPT.intro.problem}
@@ -407,19 +415,21 @@ const IntroOverlay: React.FC<{
               display: "inline-flex", 
               alignItems: "center", 
               gap: 1,
-              px: 3, 
-              py: 1.5, 
-              bgcolor: "rgba(255,255,255,0.1)",
+              px: 3.25, 
+              py: 1.6, 
+              bgcolor: "rgba(255,255,255,0.12)",
               borderRadius: 2,
-              border: "2px solid rgba(255,255,255,0.2)",
+              border: "1px solid rgba(255,255,255,0.28)",
+              boxShadow: "0 8px 20px rgba(0,0,0,0.35)",
               backdropFilter: "blur(10px)"
             }}>
               <Typography 
                 variant="h6" 
                 sx={{ 
-                  fontWeight: 700,
-                  fontSize: { xs: "1rem", sm: "1.1rem" },
-                  color: "#4caf50"
+                  fontWeight: 800,
+                  fontSize: { xs: "1.15rem", sm: "1.3rem" },
+                  color: "#ffffff",
+                  textShadow: "0 3px 10px rgba(0,0,0,0.35)"
                 }}
               >
                 {VIDEO_SCRIPT.solution}
@@ -703,14 +713,14 @@ const ScaleDMUpsellOverlay: React.FC<{
               variant="h6" 
               sx={{ 
                 fontWeight: 600, 
-                mb: 4,
-                fontSize: { xs: "1rem", sm: "1.25rem" },
+              mb: 4,
+              fontSize: { xs: "1.2rem", sm: "1.4rem" },
                 lineHeight: 1.4,
                 color: "#4caf50",
                 textShadow: "0 1px 2px rgba(0,0,0,0.3)"
               }}
             >
-              Set up your comment-to-DM automation with ScaleDM 100% free in under 30 seconds
+              Get started for free with ScaleDM
             </Typography>
           </motion.div>
 
@@ -1143,12 +1153,21 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
                           <Typography variant="h6" sx={{ 
                             fontSize: 15, 
                             fontWeight: 700, 
-                            mb: 0.5, 
+                            mb: 0.25, 
                             lineHeight: 1.3,
                             color: "text.primary",
                             textAlign: "left"
                           }}>
-                            Sky-Blue Satin Evening Dress
+                            Autumn Ribbed Knit Two‑Piece Set
+                          </Typography>
+                          <Typography variant="caption" sx={{ 
+                            fontSize: 12,
+                            color: "text.secondary",
+                            display: "block",
+                            mb: 0.5,
+                            textAlign: "left"
+                          }}>
+                            $79 • ⭐ 4.8
                           </Typography>
                           <Typography variant="body2" sx={{ 
                             fontSize: 13, 
@@ -1158,7 +1177,7 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
                             display: "block",
                             textAlign: "left"
                           }}>
-                            A sleek sky-blue satin dress with a timeless silhouette—effortlessly elegant for weddings, galas, and nights out.
+                            Cozy ribbed knit set with a flattering slim fit. Pair of matching top and skirt—effortless style from brunch to date night.
                           </Typography>
                         </Box>
                         <Box sx={{ position: "relative", display: "flex", justifyContent: "center", width: "100%", p: { xs: 1, sm: 1.5 } }}>
@@ -1253,7 +1272,15 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
                         <Typography variant="caption" sx={{ color: "#666", fontSize: "0.6rem" }}>{"FASHION > "}<u>EVENING DRESSES</u></Typography>
                       </Box>
                       <Box sx={{ px: 2, py: 1.5, bgcolor: "white" }}>
-                        <Typography variant="h3" sx={{ fontWeight: 900, color: "#000", mb: 1.5, fontSize: "1.3rem" }}>Sky-Blue Satin Evening Dress</Typography>
+                        <Typography variant="h3" sx={{ fontWeight: 900, color: "#000", mb: 0.75, fontSize: "1.3rem" }}>Autumn Ribbed Knit Two‑Piece Set</Typography>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
+                          <Typography variant="h6" sx={{ fontWeight: 800, fontSize: "1rem", color: "#111" }}>$79</Typography>
+                          <Typography variant="caption" sx={{ color: "#666", fontSize: "0.7rem" }}>incl. taxes</Typography>
+                          <Box sx={{ ml: "auto", display: "flex", alignItems: "center", gap: 0.5 }}>
+                            <Typography variant="caption" sx={{ fontSize: "0.7rem" }}>⭐ 4.8</Typography>
+                            <Typography variant="caption" sx={{ fontSize: "0.7rem" }}>• 127 reviews</Typography>
+                          </Box>
+                        </Box>
                         <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
                           <Avatar src="/animation_profile.png" alt="stylebysarah business profile" sx={{ width: 24, height: 24 }} />
                           <Typography variant="body2" sx={{ fontWeight: 700, fontSize: "0.8rem" }}>By <strong>STYLE BY SARAH</strong></Typography>
@@ -1263,28 +1290,32 @@ const InstagramInteractionDemo: React.FC<InstagramInteractionDemoProps> = ({
                           </Box>
                         </Box>
                         <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}>
-                          <Box sx={{ px: 1.5, py: 0.75, bgcolor: "#000", color: "white", borderRadius: 1, fontWeight: 700, fontSize: "0.75rem" }}>SHOP NOW</Box>
                           <Box sx={{ display: "flex", gap: 0.5 }}>
-                            <Box sx={{ width: 20, height: 20, borderRadius: "50%", bgcolor: "#ddd", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.6rem" }}>P</Box>
-                            <Box sx={{ width: 20, height: 20, borderRadius: "50%", bgcolor: "#ddd", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.6rem" }}>♡</Box>
-                            <Box sx={{ width: 20, height: 20, borderRadius: "50%", bgcolor: "#ddd", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.6rem" }}>🖨</Box>
+                            <Box sx={{ px: 1, py: 0.4, borderRadius: 1, bgcolor: "#111", color: "white", fontWeight: 800, fontSize: "0.7rem" }}>ADD TO BAG</Box>
+                            <Box sx={{ px: 1, py: 0.4, borderRadius: 1, border: "1px solid #ddd", color: "#111", fontWeight: 800, fontSize: "0.7rem" }}>WISHLIST ♡</Box>
+                          </Box>
+                          <Box sx={{ ml: "auto", display: "flex", gap: 0.5 }}>
+                            <Box sx={{ px: 0.75, py: 0.25, borderRadius: 2, bgcolor: "#f1f5f9", fontSize: "0.6rem", fontWeight: 700, color: "#0f172a" }}>XS</Box>
+                            <Box sx={{ px: 0.75, py: 0.25, borderRadius: 2, bgcolor: "#f1f5f9", fontSize: "0.6rem", fontWeight: 700, color: "#0f172a" }}>S</Box>
+                            <Box sx={{ px: 0.75, py: 0.25, borderRadius: 2, bgcolor: "#f1f5f9", fontSize: "0.6rem", fontWeight: 700, color: "#0f172a" }}>M</Box>
+                            <Box sx={{ px: 0.75, py: 0.25, borderRadius: 2, bgcolor: "#f1f5f9", fontSize: "0.6rem", fontWeight: 700, color: "#0f172a" }}>L</Box>
                           </Box>
                         </Box>
                         <Box sx={{ display: "flex", gap: 0.5, mb: 1 }}>
-                          <Box sx={{ px: 0.75, py: 0.25, bgcolor: "#1DA1F2", color: "white", borderRadius: 2, fontSize: "0.55rem", fontWeight: 700 }}>SATIN</Box>
-                          <Box sx={{ px: 0.75, py: 0.25, bgcolor: "#87CEEB", color: "#000", borderRadius: 2, fontSize: "0.55rem", fontWeight: 700 }}>SKY BLUE</Box>
-                          <Box sx={{ px: 0.75, py: 0.25, bgcolor: "#4B0082", color: "white", borderRadius: 2, fontSize: "0.55rem", fontWeight: 700 }}>EVENING</Box>
+                          <Box sx={{ px: 0.75, py: 0.25, bgcolor: "#0ea5e9", color: "white", borderRadius: 2, fontSize: "0.55rem", fontWeight: 700 }}>RIBBED</Box>
+                          <Box sx={{ px: 0.75, py: 0.25, bgcolor: "#fde68a", color: "#111", borderRadius: 2, fontSize: "0.55rem", fontWeight: 700 }}>AUTUMN</Box>
+                          <Box sx={{ px: 0.75, py: 0.25, bgcolor: "#ef4444", color: "white", borderRadius: 2, fontSize: "0.55rem", fontWeight: 700 }}>TWO‑PIECE</Box>
                         </Box>
                         <Box sx={{ mb: 1.5 }}>
-                          <Box component="img" src="/dress.png" alt="Sky-Blue Satin Evening Dress" sx={{ width: "100%", height: { xs: 160, sm: 200 }, objectFit: "cover", borderRadius: 1 }} />
+                          <Box component="img" src="/dress.png" alt="Autumn Ribbed Knit Two‑Piece Set" sx={{ width: "100%", height: { xs: 160, sm: 200 }, objectFit: "cover", borderRadius: 1 }} />
                         </Box>
                         <Typography variant="body2" sx={{ color: "#333", lineHeight: 1.4, mb: 1, fontSize: "0.85rem" }}>
-                          A sophisticated sky-blue satin dress with a soft sheen, elegant drape, and a flattering fit—made to turn heads.
+                          Cozy ribbed knit set with a flattering slim fit. Pair of matching top and skirt—effortless style from brunch to date night.
                         </Typography>
                         <Box sx={{ mt: 1.5, p: 1.5, bgcolor: "#f8f8f8", borderRadius: 1 }}>
                           <Typography variant="body2" sx={{ fontWeight: 700, fontSize: "0.8rem", mb: 0.5 }}>Highlights:</Typography>
                           <Typography variant="caption" sx={{ fontSize: "0.7rem", color: "#666", lineHeight: 1.3 }}>
-                            • Best seller • Great value • Trusted by customers • Fast delivery
+                            • New drop • Great value • Fast shipping • Easy returns
                           </Typography>
                         </Box>
                       </Box>
