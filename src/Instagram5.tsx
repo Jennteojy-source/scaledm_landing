@@ -14,7 +14,7 @@ interface InstagramInteractionDemoProps {
 
 const ANIMATION_TIMINGS = {
   AUTO_START_DELAY: 1000,  // Comfortable start
-  INTRO_DISPLAY_DURATION: 5000,  // Extended intro for better impact
+  INTRO_DISPLAY_DURATION: 6000,  // Extended intro for better impact
   POST_PREVIEW_DURATION: 2500,  // Show raw post briefly before animation
   INTRO_TRANSITION_DELAY: 1500,  // Pause before demo
   TAP_ANIMATION_DURATION: 400,  // More visible tap feedback

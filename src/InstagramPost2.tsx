@@ -1,8 +1,27 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+
+type AspectRatio = '1:1' | '4:5' | '9:16';
+
+const getAspectRatioDimensions = (aspectRatio: AspectRatio, baseSize: number = 540) => {
+  switch (aspectRatio) {
+    case '1:1':
+      return { width: baseSize, height: baseSize };
+    case '4:5':
+      return { width: baseSize, height: Math.round(baseSize * 1.25) };
+    case '9:16':
+      return { width: baseSize, height: Math.round(baseSize * 1.78) };
+    default:
+      return { width: baseSize, height: baseSize };
+  }
+};
 
 const InstagramPost2: React.FC = () => {
   const [step, setStep] = useState<number>(0); // each commenter has 2 steps: comment then reply
+  const [isRunning, setIsRunning] = useState<boolean>(false);
+  const [isPaused, setIsPaused] = useState<boolean>(false);
+  const [aspectRatio, setAspectRatio] = useState<AspectRatio>('1:1');
+  const timeoutRef = useRef<number | null>(null);
   const commenters = useMemo(() => [
     { user: 'jae_lissy_', text: 'NEED', avatar: '/user1.png' },
     { user: 'jinglekitty', text: 'Need', avatar: '/user2.png' },
@@ -18,21 +37,78 @@ const InstagramPost2: React.FC = () => {
 
   useEffect(() => {
     const totalSteps = commenters.length * 2;
-    const delay = step === 0 ? 2000 : (step % 2 === 0 ? 700 : 900); // initial wait, then comment/reply cadence
 
-    if (step < totalSteps) {
-      const t = window.setTimeout(() => setStep(prev => prev + 1), delay);
-      return () => window.clearTimeout(t);
+    if (timeoutRef.current) {
+      window.clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
     }
 
-    // Pause, then loop
-    const resetTimer = window.setTimeout(() => setStep(0), 4000);
-    return () => window.clearTimeout(resetTimer);
-  }, [step, commenters.length]);
+    if (!isRunning || isPaused) return;
+
+    if (step < totalSteps) {
+      const delay = step === 0 ? 2000 : (step % 2 === 0 ? 700 : 900);
+      timeoutRef.current = window.setTimeout(() => setStep(prev => prev + 1), delay) as unknown as number;
+      return () => {
+        if (timeoutRef.current) {
+          window.clearTimeout(timeoutRef.current);
+          timeoutRef.current = null;
+        }
+      };
+    } else {
+      setIsRunning(false);
+    }
+  }, [step, commenters.length, isRunning, isPaused]);
+
+  useEffect(() => () => {
+    if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
+  }, []);
+
+  const handleStart = () => {
+    if (isRunning) return;
+    if (step !== 0) setStep(0);
+    setIsPaused(false);
+    setIsRunning(true);
+  };
+
+  const handlePauseToggle = () => {
+    if (!isRunning && step === 0) return;
+    setIsPaused(prev => !prev);
+    if (isPaused) setIsRunning(true);
+  };
+
+  const handleReset = () => {
+    if (timeoutRef.current) {
+      window.clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+    setIsRunning(false);
+    setIsPaused(false);
+    setStep(0);
+  };
 
   return (
-    <div className="w-full flex justify-center px-3">
-      <div className="relative max-w-[850px] w-full bg-white rounded-none shadow border border-neutral-200 overflow-hidden flex flex-col h-[860px] sm:h-[920px] md:h-[1000px] min-h-0">
+    <div className="w-full flex justify-center px-3 relative">
+      {/* Controls */}
+      <div className="absolute top-2 right-2 z-10 bg-white/90 backdrop-blur rounded shadow p-2 flex flex-col gap-2">
+        <div className="flex items-center gap-2">
+          <button onClick={handleStart} disabled={isRunning || step !== 0} className={`px-2.5 py-1 text-xs font-bold rounded ${(!isRunning && step === 0) ? 'bg-emerald-600 text-white' : 'bg-neutral-400 text-white opacity-70 cursor-not-allowed'}`}>▶ Start</button>
+          <button onClick={handlePauseToggle} disabled={!isRunning && step === 0} className={`px-2.5 py-1 text-xs font-bold rounded ${isPaused ? 'bg-emerald-600 text-white' : 'bg-amber-500 text-white'}`}>{isPaused ? '▶ Resume' : '⏸ Pause'}</button>
+          <button onClick={handleReset} className="px-2.5 py-1 text-xs font-bold rounded bg-neutral-500 text-white">🔄 Reset</button>
+        </div>
+        <div className="flex items-center gap-1">
+          <span className="text-[10px] font-bold text-neutral-600">Ratio:</span>
+          {(['1:1','4:5','9:16'] as AspectRatio[]).map(r => (
+            <button key={r} onClick={() => setAspectRatio(r)} className={`px-2 py-0.5 text-[10px] font-bold rounded ${aspectRatio === r ? 'bg-sky-600 text-white' : 'bg-neutral-200 text-neutral-700'}`}>{r}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* Aspect-ratio frame */}
+      <div
+        className="relative flex justify-center items-start"
+        style={{ width: `${getAspectRatioDimensions(aspectRatio).width}px`, height: `${getAspectRatioDimensions(aspectRatio).height}px` }}
+      >
+        <div className="relative max-w-[850px] w-full h-full bg-white rounded-none shadow border border-neutral-200 overflow-hidden flex flex-col">
 
         {/* Post header */}
         <div className="px-4 py-3 flex items-center gap-3">
@@ -43,8 +119,8 @@ const InstagramPost2: React.FC = () => {
           <div className="ml-auto text-neutral-500">•••</div>
         </div>
 
-        {/* Media (slightly taller) */}
-        <div className="w-full h-[220px] sm:h-[260px] md:h-[300px] bg-white">
+        {/* Media */}
+        <div className="w-full flex-1 bg-white">
           <img src="/amazon.png" alt="post" className="w-full h-full object-contain" loading="lazy" />
         </div>
 
@@ -113,6 +189,7 @@ const InstagramPost2: React.FC = () => {
           })}
         </div>
       </div>
+      </div>
       {/* Powered by ScaleDM in-card overlay at the end of each loop */}
       <AnimatePresence>
         {step >= commenters.length * 2 && (
@@ -152,18 +229,27 @@ const InstagramPost2: React.FC = () => {
   );
 };
 
-const IconHeart: React.FC<{ className?: string }> = ({ className = "w-6 h-6" }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 22l7.8-8.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
-);
-const IconComment: React.FC = () => (
-  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a4 4 0 0 1-4 4H7l-4 4V5a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4Z"/></svg>
-);
-const IconDM: React.FC = () => (
-  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7Z"/></svg>
-);
-const IconSave: React.FC = () => (
-  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2Z"/></svg>
-);
+function IconHeart(props: any) {
+  const className = (props && props.className) ? props.className : "w-6 h-6";
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 22l7.8-8.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+  );
+}
+function IconComment() {
+  return (
+    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a4 4 0 0 1-4 4H7l-4 4V5a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4Z"/></svg>
+  );
+}
+function IconDM() {
+  return (
+    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7Z"/></svg>
+  );
+}
+function IconSave() {
+  return (
+    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2Z"/></svg>
+  );
+}
 
 export default InstagramPost2;
 
