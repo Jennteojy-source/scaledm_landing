@@ -9,6 +9,7 @@ import InstagramPost2 from './InstagramPost2';
 import InstagramPost3 from './InstagramPost3';
 import InstagramPost4 from './InstagramPost4';
 import Instagram5 from './Instagram5';
+import CarouselAds from './CarouselAds';
 
 const App: React.FC = () => {
   return (
@@ -27,6 +28,7 @@ const App: React.FC = () => {
             <Route path="/916" element={<AdLanding916 />} />
             <Route path="/animation" element={<Animation />} />
             <Route path="/features" element={<FeaturesPage />} />
+            <Route path="/carousel-ads" element={<CarouselAds />} />
             <Route path="/ig-post" element={<InstagramPost />} />
             <Route path="/ig-post-2" element={<InstagramPost2 />} />
             <Route path="/ig-post-3" element={<InstagramPost3 />} />
