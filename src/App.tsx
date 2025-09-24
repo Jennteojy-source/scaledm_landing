@@ -22,20 +22,18 @@ const App: React.FC = () => {
         height: '100vh',
         overflow: 'hidden'
       }}>
-        <div style={{ width: 'min(100vw, 100vh)', height: 'min(100vw, 100vh)' }}>
-          <Routes>
-            <Route path="/" element={<AdLanding />} />
-            <Route path="/916" element={<AdLanding916 />} />
-            <Route path="/animation" element={<Animation />} />
-            <Route path="/features" element={<FeaturesPage />} />
-            <Route path="/carousel-ads" element={<CarouselAds />} />
-            <Route path="/ig-post" element={<InstagramPost />} />
-            <Route path="/ig-post-2" element={<InstagramPost2 />} />
-            <Route path="/ig-post-3" element={<InstagramPost3 />} />
-            <Route path="/ig-post-4" element={<InstagramPost4 />} />
-            <Route path="/ig-post-5" element={<Instagram5 />} />
-          </Routes>
-        </div>
+        <Routes>
+          <Route path="/" element={<AdLanding />} />
+          <Route path="/916" element={<AdLanding916 />} />
+          <Route path="/animation" element={<Animation />} />
+          <Route path="/features" element={<FeaturesPage />} />
+          <Route path="/carousel-ads" element={<CarouselAds />} />
+          <Route path="/ig-post" element={<InstagramPost />} />
+          <Route path="/ig-post-2" element={<InstagramPost2 />} />
+          <Route path="/ig-post-3" element={<InstagramPost3 />} />
+          <Route path="/ig-post-4" element={<InstagramPost4 />} />
+          <Route path="/ig-post-5" element={<Instagram5 />} />
+        </Routes>
       </div>
     </Router>
   );

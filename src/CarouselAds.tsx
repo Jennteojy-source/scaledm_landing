@@ -6,8 +6,7 @@ type Aspect = '1:1' | '9:16';
 const slidesDefault = [
   { id: 1, title: 'Every Business need this in 2025' },
   { id: 2, title: 'ScaleDM – Automate your Instagram Growth', image: '/carousel_screen_2.jpeg' },
-  { id: 3, title: 'Save Time with ReplyRush', image: '/notif.png' },
-  { id: 4, title: "Don’t get stuck doing it all yourself!", image: '/amazon.png' },
+  { id: 3, title: 'Ready to Automate & Grow Smarter?', image: '/carousel_screen3.jpeg' },
 ];
 
 const CarouselAds: React.FC = () => {
@@ -50,27 +49,77 @@ const CarouselAds: React.FC = () => {
             >
               {slides[index].id === 1 ? (
                 <div
-                  className="flex-1 relative bg-white flex items-center justify-center"
+                  className="flex-1 relative bg-white"
                 >
                   <div
                     className="absolute inset-0 opacity-50"
                     style={{
                       backgroundImage:
                         'linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px)',
-                      backgroundSize: '60px 60px',
+                      backgroundSize: '75px 75px',
                       backgroundPosition: 'center',
                     }}
                   />
-                  <div className="relative text-center px-6">
+                  <div className="absolute inset-[6%] sm:inset-[7%] md:inset-[8%] flex items-start justify-center">
+                    <div className="text-center px-4 pt-4 sm:pt-6 md:pt-8">
                     <div className="text-[28px] sm:text-[42px] md:text-[54px] font-extrabold text-black leading-tight tracking-tight">
-                      <div>Every Business</div>
-                      <div>need this in</div>
+                      <div>Every IG Business</div>
+                      <div>needs this in</div>
                       <div className="text-[#1e73ff] drop-shadow-[0_2px_0_rgba(30,115,255,0.15)]">2025</div>
                     </div>
                     <div className="mt-3 text-sm sm:text-base text-neutral-600">Swipe👉</div>
+                    </div>
                   </div>
+                  
                 </div>
               ) : slides[index].id === 2 ? (
+                <div className="flex-1 relative bg-white">
+                  <div
+                    className="absolute inset-0 opacity-50"
+                    style={{
+                      backgroundImage:
+                        'linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px)',
+                      backgroundSize: '75px 75px',
+                      backgroundPosition: 'center',
+                    }}
+                  />
+                  <div className="absolute inset-[6%] sm:inset-[7%] md:inset-[8%]">
+                    <div className="px-2 text-center">
+                      <div className="inline-block">
+                        <div className="text-[28px] sm:text-[40px] md:text-[48px] font-extrabold text-black leading-tight tracking-tight">ScaleDM</div>
+                        <div className="h-1 bg-[#1e73ff] rounded-full mt-2" />
+                      </div>
+                      <div className="mt-3 mx-auto max-w-[720px] text-[13px] sm:text-base text-neutral-700">Automate DMs, comments, and Story replies—save time, grow sales, stay connected.</div>
+                    </div>
+                    <div className="relative h-[70%] sm:h-[68%] md:h-[66%] flex items-center justify-center px-2">
+                      <div className="absolute bottom-[22%] sm:bottom-[24%] h-28 w-28 sm:h-40 sm:w-40 rounded-full bg-[#1e73ff]/10 blur-2xl" />
+                      {slides[index].image && (
+                        <img
+                          src={slides[index].image}
+                          alt="ScaleDM showcase"
+                          className="max-h-full object-contain z-10"
+                          loading="lazy"
+                        />
+                      )}
+                      <div className="absolute left-2 sm:left-6 top-[18%] sm:top-[20%] bg-white text-black rounded-2xl border border-[#1e73ff]/30 shadow-[0_8px_24px_rgba(30,115,255,0.18)] px-3 sm:px-4 py-2 text-xs sm:text-sm z-30">
+                        Instant DM Replies for IG Post/Reels
+                      </div>
+                      <div className="absolute right-2 sm:right-8 top-[30%] sm:top-[26%] bg-white text-black rounded-2xl border border-[#1e73ff]/30 shadow-[0_8px_24px_rgba(30,115,255,0.18)] px-3 sm:px-4 py-2 text-xs sm:text-sm z-30">
+                        Comment Auto Reply
+                      </div>
+                      <div className="absolute left-4 sm:left-10 top-[42%] sm:top-[40%] bg-white text-black rounded-2xl border border-[#1e73ff]/30 shadow-[0_8px_24px_rgba(30,115,255,0.18)] px-3 sm:px-4 py-2 text-xs sm:text-sm z-30">
+                        Comment Rewind
+                      </div>
+                      <div className="absolute left-6 top-[58%] sm:top-[56%] bg-white text-black rounded-2xl border border-[#1e73ff]/30 shadow-[0_8px_24px_rgba(30,115,255,0.18)] px-3 sm:px-4 py-2 text-xs sm:text-sm z-30">
+                        Welcome Openers
+                      </div>
+                      <div className="absolute right-6 top-[62%] sm:top-[58%] bg-white text-black rounded-2xl border border-[#1e73ff]/30 shadow-[0_8px_24px_rgba(30,115,255,0.18)] px-3 sm:px-4 py-2 text-xs sm:text-sm z-30">
+                        Conversation Starters in Inbox
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : slides[index].id === 3 ? (
                 <div className="flex-1 relative bg-white">
                   <div
                     className="absolute inset-0 opacity-50"
@@ -81,39 +130,29 @@ const CarouselAds: React.FC = () => {
                       backgroundPosition: 'center',
                     }}
                   />
-                  <div className="relative h-full w-full flex flex-col">
-                    <div className="px-5 pt-6 text-center">
-                      <div className="inline-block">
-                        <div className="text-[28px] sm:text-[40px] md:text-[48px] font-extrabold text-black leading-tight tracking-tight">ScaleDM</div>
-                        <div className="h-1 bg-[#1e73ff] rounded-full mt-2" />
+                  <div className="absolute inset-[6%] sm:inset-[7%] md:inset-[8%] flex flex-col">
+                    <div className="text-center">
+                      <div className="text-[26px] sm:text-[38px] md:text-[46px] font-extrabold text-black leading-tight tracking-tight">
+                        Ready to Automate & Grow Smarter?
                       </div>
-                      <div className="mt-3 mx-auto max-w-[720px] text-[13px] sm:text-base text-neutral-700">Automate DMs, comments, and Story replies—save time, grow sales, stay connected.</div>
+                      <div className="mt-3 text-sm sm:text-lg text-neutral-800 flex items-center justify-center gap-2">
+                        <span>👉</span>
+                        <span>Start today with</span>
+                        <span className="font-semibold text-[#1e73ff]">ScaleDM</span>
+                      </div>
+                      <div className="mt-2 text-sm sm:text-lg">
+                        <a href="https://www.ScaleDM.io" target="_blank" rel="noreferrer" className="text-black underline decoration-[#1e73ff] underline-offset-4">www.ScaleDM.io</a>
+                      </div>
                     </div>
-                    <div className="relative flex-1 flex items-end justify-center px-4 pb-6">
-                      <div className="absolute bottom-[22%] sm:bottom-[24%] h-28 w-28 sm:h-40 sm:w-40 rounded-full bg-[#1e73ff]/10 blur-2xl" />
+                    <div className="relative flex-1 mt-4 flex items-start justify-center px-6 sm:px-10 pt-4 sm:pt-6">
                       {slides[index].image && (
                         <img
                           src={slides[index].image}
-                          alt="ScaleDM showcase"
-                          className="max-h-[55%] sm:max-h-[65%] object-contain z-10"
+                          alt="Happy users"
+                          className="max-h-[65%] w-auto object-contain rounded-[32px]"
                           loading="lazy"
                         />
                       )}
-                      <div className="absolute left-3 sm:left-6 top-[42%] sm:top-[40%] bg-white text-black rounded-2xl border border-[#1e73ff]/30 shadow-[0_8px_24px_rgba(30,115,255,0.18)] px-3 sm:px-4 py-2 text-xs sm:text-sm z-30">
-                        Instant DM Replies for IG Post/Reels
-                      </div>
-                      <div className="absolute right-3 sm:right-8 top-[52%] sm:top-[46%] bg-white text-black rounded-2xl border border-[#1e73ff]/30 shadow-[0_8px_24px_rgba(30,115,255,0.18)] px-3 sm:px-4 py-2 text-xs sm:text-sm z-30">
-                        Comment Auto Reply
-                      </div>
-                      <div className="absolute left-4 sm:left-10 bottom-[26%] sm:bottom-[28%] bg-white text-black rounded-2xl border border-[#1e73ff]/30 shadow-[0_8px_24px_rgba(30,115,255,0.18)] px-3 sm:px-4 py-2 text-xs sm:text-sm z-30">
-                        Comment Rewind
-                      </div>
-                      <div className="absolute left-6 bottom-[16%] sm:bottom-[18%] bg-white text-black rounded-2xl border border-[#1e73ff]/30 shadow-[0_8px_24px_rgba(30,115,255,0.18)] px-3 sm:px-4 py-2 text-xs sm:text-sm z-30">
-                        Welcome Openers
-                      </div>
-                      <div className="absolute right-6 bottom-[18%] sm:bottom-[20%] bg-white text-black rounded-2xl border border-[#1e73ff]/30 shadow-[0_8px_24px_rgba(30,115,255,0.18)] px-3 sm:px-4 py-2 text-xs sm:text-sm z-30">
-                        Conversation Starters in Inbox
-                      </div>
                     </div>
                   </div>
                 </div>
