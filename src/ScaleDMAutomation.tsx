@@ -194,7 +194,7 @@ const ScaleDMAutomation: React.FC = () => {
       </div>
 
       {/* Video-like Fixed Container */}
-      <div className="w-full flex-1 flex items-center justify-center" style={{ minHeight: '100vh' }}>
+      <div className="w-full flex-1 flex items-center justify-center lg:items-start lg:pt-12" style={{ minHeight: '100vh' }}>
         <div 
           className="video-container"
           style={{
