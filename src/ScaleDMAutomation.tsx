@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const ScaleDMAutomation: React.FC = () => {
@@ -36,10 +36,57 @@ const ScaleDMAutomation: React.FC = () => {
     }
   };
 
+  // Line-by-line reveal and pre-exit for slide 2
+  const LineRevealText: React.FC<{ lines: string[]; colorClass: string; slideDurationMs?: number; }>
+    = ({ lines, colorClass, slideDurationMs }) => {
+    const [active, setActive] = useState<boolean[]>(() => lines.map(() => true));
+
+    useEffect(() => {
+      if (!slideDurationMs) return;
+      const preExitStart = Math.max(0, slideDurationMs - 700);
+      const timers: number[] = [];
+
+      timers.push(window.setTimeout(() => {
+        // remove lines one-by-one from bottom to top
+        for (let i = lines.length - 1; i >= 0; i--) {
+          timers.push(window.setTimeout(() => {
+            setActive(prev => prev.map((v, idx) => idx === i ? false : v));
+          }, (lines.length - 1 - i) * 130));
+        }
+      }, preExitStart));
+
+      return () => timers.forEach(t => window.clearTimeout(t));
+    }, [lines, slideDurationMs]);
+
+    const container = {
+      hidden: { opacity: 1 },
+      show: { opacity: 1, transition: { staggerChildren: 0.12 } }
+    };
+    const line = {
+      hidden: { opacity: 0, y: 12 },
+      show: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+      exit: { opacity: 0, y: -12, transition: { duration: 0.32 } }
+    };
+
+    return (
+      <motion.div className="space-y-3" variants={container} initial="hidden" animate="show">
+        <AnimatePresence>
+          {lines.map((ln, idx) => (
+            active[idx] ? (
+              <motion.div key={idx} variants={line} exit="exit">
+                <span className={`${colorClass}`}>{ln}</span>
+              </motion.div>
+            ) : null
+          ))}
+        </AnimatePresence>
+      </motion.div>
+    );
+  };
+
   const slides = [
     {
       id: 1,
-      text: "Ever see IG creators\nask you to comment\nkeywords for a link?",
+      text: "Ever see IG creators ask you to comment keywords for a link?",
       bgColor: "bg-gradient-to-br from-[#00D4FF] via-[#0ea5e9] to-[#0284c7]",
       textColor: "text-white",
       animation: "slideInFromLeft",
@@ -47,7 +94,12 @@ const ScaleDMAutomation: React.FC = () => {
     },
     {
       id: 2,
-      text: "This drives engagement,\nsignaling Instagram's\nalgorithm to show their\ncontent to more people",
+      text: "This drives engagement, signaling Instagram's algorithm to show their content to more people",
+      lines: [
+        "This drives engagement,",
+        "signaling Instagram's algorithm",
+        "to show their content to more people"
+      ],
       subtitle: "Smart creators know the secret",
       bgColor: "bg-gradient-to-br from-[#8B5CF6] via-[#7c3aed] to-[#6d28d9]",
       textColor: "text-white",
@@ -56,7 +108,7 @@ const ScaleDMAutomation: React.FC = () => {
     },
     {
       id: 3,
-      text: "Want to set this up\nyourself?\n100% free & setup in 30s",
+      text: "Want to set this up yourself? 100% free & setup in 30s",
       bgColor: "bg-gradient-to-br from-[#00D4FF] via-[#0ea5e9] to-[#0284c7]",
       textColor: "text-white",
       animation: "scaleInBounce",
@@ -64,7 +116,7 @@ const ScaleDMAutomation: React.FC = () => {
     },
     {
       id: 4,
-      text: "Yes, and it's\nMeta approved",
+      text: "Yes, and it's Meta approved",
       bgColor: "bg-gradient-to-br from-[#1877f2] via-[#42a5f5] to-[#1e40af]",
       textColor: "text-white",
       animation: "scaleInBounce",
@@ -72,7 +124,7 @@ const ScaleDMAutomation: React.FC = () => {
     },
     {
       id: 5,
-      text: "We've got\nyou covered",
+      text: "We've got you covered",
       bgColor: "bg-gradient-to-br from-[#8B5CF6] via-[#7c3aed] to-[#6d28d9]",
       textColor: "text-white",
       animation: "fadeInUp",
@@ -80,7 +132,7 @@ const ScaleDMAutomation: React.FC = () => {
     },
     {
       id: 6,
-      text: "Join ScaleDM for free\nSetup your \ncomment-to-link solution\n in 30s",
+      text: "Join ScaleDM for free. Set up your comment-to-link solution in 30s",
       bgColor: "bg-gradient-to-br from-[#00D4FF] via-[#8B5CF6] to-[#00D4FF]",
       textColor: "text-white",
       animation: "typewriter",
@@ -88,19 +140,82 @@ const ScaleDMAutomation: React.FC = () => {
     }
   ];
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    
-    if (isPlaying && !isPaused) {
-      interval = setInterval(() => {
-        setCurrentSlide((prev) => (prev + 1) % slides.length);
-      }, 6000); // 6 seconds per slide for better readability
+  const slideDurations = useMemo(() => {
+    const minDuration = 2;
+    const baseDuration = 2;
+    const perWordFactor = 0.18;
+    const maxDuration = 5.5;
+    const totalCap = 30;
+
+    const computed = slides.map((slide) => {
+      const combined = [slide.subtitle, slide.text].filter(Boolean).join(' ');
+      const wordCount = combined.trim().split(/\s+/).filter(Boolean).length;
+      const raw = baseDuration + wordCount * perWordFactor;
+      const bounded = Math.min(maxDuration, Math.max(minDuration, raw));
+      return Number(bounded.toFixed(2));
+    });
+
+    const total = computed.reduce((sum, duration) => sum + duration, 0);
+    if (total <= totalCap) {
+      return computed;
     }
 
+    const scale = totalCap / total;
+    const scaled = computed.map((duration) => {
+      const scaledValue = duration * scale;
+      return scaledValue < minDuration ? minDuration : scaledValue;
+    });
+
+    const scaledTotal = scaled.reduce((sum, duration) => sum + duration, 0);
+    if (scaledTotal <= totalCap) {
+      return scaled.map((duration) => Number(duration.toFixed(2)));
+    }
+
+    const excess = scaledTotal - totalCap;
+    const adjustableSum = scaled.reduce((sum, duration) => {
+      return duration > minDuration ? sum + (duration - minDuration) : sum;
+    }, 0);
+
+    if (adjustableSum === 0) {
+      return scaled.map((duration) => Number(duration.toFixed(2)));
+    }
+
+    const reductionFactor = excess / adjustableSum;
+    return scaled.map((duration) => {
+      if (duration <= minDuration) {
+        return Number(duration.toFixed(2));
+      }
+      const extra = duration - minDuration;
+      const adjusted = duration - extra * reductionFactor;
+      return Number(adjusted.toFixed(2));
+    });
+  }, [slides]);
+
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const interSlideGapSeconds = 0.8; // extra pause between slides
+
+  useEffect(() => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+
+    if (!isPlaying || isPaused) {
+      return;
+    }
+
+    const durationSeconds = (slideDurations[currentSlide] ?? 4) + interSlideGapSeconds;
+    timerRef.current = setTimeout(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, durationSeconds * 1000);
+
     return () => {
-      if (interval) clearInterval(interval);
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
     };
-  }, [isPlaying, isPaused, slides.length]);
+  }, [isPlaying, isPaused, currentSlide, slideDurations, slides.length]);
 
   const handleStart = () => {
     setIsPlaying(true);
@@ -286,20 +401,27 @@ const ScaleDMAutomation: React.FC = () => {
                       </motion.div>
                     )}
                     
-                    {/* Smooth Main Text Animation with Line Breaks */}
+                    {/* Smooth Main Text Animation with balanced wrapping */}
                     <motion.h1 
-                      className={`text-3xl md:text-4xl lg:text-5xl font-black leading-tight ${currentSlideData.textColor}`}
+                      className={`text-2xl md:text-4xl lg:text-5xl font-black leading-[1.28] tracking-tight ${currentSlideData.textColor} max-w-[98%] md:max-w-[78%] mx-auto`}
                       style={{
                         textShadow: '0 4px 8px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.2)',
-                        whiteSpace: 'pre-line',
-                        textAlign: 'center'
+                        textAlign: 'center',
+                        textWrap: 'balance',
+                        fontSize: 'clamp(20px, 4.6vw, 46px)'
                       }}
                       initial="initial"
                       animate="animate"
                       variants={slideVariants[currentSlideData.animation]}
                       transition={{ delay: 0.4, duration: 1.0, ease: "easeOut" }}
                     >
-                      {currentSlideData.text}
+                      {currentSlide === 1 && (currentSlideData as any).lines ? (
+                        <LineRevealText
+                          lines={(currentSlideData as any).lines}
+                          colorClass={currentSlideData.textColor}
+                          slideDurationMs={(slideDurations[currentSlide] ?? 4) * 1000}
+                        />
+                      ) : currentSlideData.text}
                     </motion.h1>
                     
                     {/* Animated Thumbs Down for Slide 6 (CTA Direction) */}
