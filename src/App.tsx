@@ -10,6 +10,7 @@ import InstagramPost3 from './InstagramPost3';
 import InstagramPost4 from './InstagramPost4';
 import Instagram5 from './Instagram5';
 import CarouselAds from './CarouselAds';
+import ScaleDMAutomation from './ScaleDMAutomation';
 
 const App: React.FC = () => {
   return (
@@ -33,6 +34,7 @@ const App: React.FC = () => {
           <Route path="/ig-post-3" element={<InstagramPost3 />} />
           <Route path="/ig-post-4" element={<InstagramPost4 />} />
           <Route path="/ig-post-5" element={<Instagram5 />} />
+          <Route path="/scaledm-automation" element={<ScaleDMAutomation />} />
         </Routes>
       </div>
     </Router>

@@ -60,8 +60,8 @@ const CarouselAds: React.FC = () => {
                       backgroundPosition: 'center',
                     }}
                   />
-                  <div className="absolute inset-[6%] sm:inset-[7%] md:inset-[8%] flex items-start justify-center">
-                    <div className="text-center px-4 pt-4 sm:pt-6 md:pt-8">
+                  <div className="absolute inset-[6%] sm:inset-[7%] md:inset-[8%] flex items-center justify-center">
+                    <div className="text-center px-4">
                     <div className="text-[28px] sm:text-[42px] md:text-[54px] font-extrabold text-black leading-tight tracking-tight">
                       <div>Every IG Business</div>
                       <div>needs this in</div>
@@ -83,38 +83,38 @@ const CarouselAds: React.FC = () => {
                       backgroundPosition: 'center',
                     }}
                   />
-                  <div className="absolute inset-[6%] sm:inset-[7%] md:inset-[8%]">
+                  <div className="absolute inset-[6%] sm:inset-[7%] md:inset-[8%] flex flex-col items-center justify-center">
                     <div className="px-2 text-center">
-                      <div className="inline-block">
+                      <div className="inline-flex items-center justify-center">
                         <div className="text-[28px] sm:text-[40px] md:text-[48px] font-extrabold text-black leading-tight tracking-tight">ScaleDM</div>
-                        <div className="h-1 bg-[#1e73ff] rounded-full mt-2" />
                       </div>
-                      <div className="mt-3 mx-auto max-w-[720px] text-[13px] sm:text-base text-neutral-700">Automate DMs, comments, and Story replies—save time, grow sales, stay connected.</div>
+                      <div className="h-1 bg-[#1e73ff] rounded-full mt-2" />
                     </div>
-                    <div className="relative h-[70%] sm:h-[68%] md:h-[66%] flex items-center justify-center px-2">
+                    <div className="mt-3 mx-auto max-w-[720px] text-[13px] sm:text-base text-neutral-700">Automate DMs, comments, and Story replies—save time, grow sales, stay connected.</div>
+                    <div className="relative h-[75%] sm:h-[75%] md:h-[75%] flex items-center justify-center px-2">
                       <div className="absolute bottom-[22%] sm:bottom-[24%] h-28 w-28 sm:h-40 sm:w-40 rounded-full bg-[#1e73ff]/10 blur-2xl" />
                       {slides[index].image && (
                         <img
                           src={slides[index].image}
                           alt="ScaleDM showcase"
-                          className="max-h-full object-contain z-10"
+                          className="max-h-full w-auto object-contain z-10"
                           loading="lazy"
                         />
                       )}
                       <div className="absolute left-2 sm:left-6 top-[18%] sm:top-[20%] bg-white text-black rounded-2xl border border-[#1e73ff]/30 shadow-[0_8px_24px_rgba(30,115,255,0.18)] px-3 sm:px-4 py-2 text-xs sm:text-sm z-30">
-                        Instant DM Replies for IG Post/Reels
+                        Automatically reply to every comment
                       </div>
                       <div className="absolute right-2 sm:right-8 top-[30%] sm:top-[26%] bg-white text-black rounded-2xl border border-[#1e73ff]/30 shadow-[0_8px_24px_rgba(30,115,255,0.18)] px-3 sm:px-4 py-2 text-xs sm:text-sm z-30">
-                        Comment Auto Reply
+                        Auto‑share your website links via DM
                       </div>
                       <div className="absolute left-4 sm:left-10 top-[42%] sm:top-[40%] bg-white text-black rounded-2xl border border-[#1e73ff]/30 shadow-[0_8px_24px_rgba(30,115,255,0.18)] px-3 sm:px-4 py-2 text-xs sm:text-sm z-30">
-                        Comment Rewind
+                        Auto‑process past engagement
                       </div>
                       <div className="absolute left-6 top-[58%] sm:top-[56%] bg-white text-black rounded-2xl border border-[#1e73ff]/30 shadow-[0_8px_24px_rgba(30,115,255,0.18)] px-3 sm:px-4 py-2 text-xs sm:text-sm z-30">
-                        Welcome Openers
+                        Navigation menu to your site & FAQs
                       </div>
                       <div className="absolute right-6 top-[62%] sm:top-[58%] bg-white text-black rounded-2xl border border-[#1e73ff]/30 shadow-[0_8px_24px_rgba(30,115,255,0.18)] px-3 sm:px-4 py-2 text-xs sm:text-sm z-30">
-                        Conversation Starters in Inbox
+                        Conversation starters in Inbox
                       </div>
                     </div>
                   </div>
@@ -130,7 +130,7 @@ const CarouselAds: React.FC = () => {
                       backgroundPosition: 'center',
                     }}
                   />
-                  <div className="absolute inset-[6%] sm:inset-[7%] md:inset-[8%] flex flex-col">
+                  <div className="absolute inset-[6%] sm:inset-[7%] md:inset-[8%] flex flex-col items-center justify-center">
                     <div className="text-center">
                       <div className="text-[26px] sm:text-[38px] md:text-[46px] font-extrabold text-black leading-tight tracking-tight">
                         Ready to Automate & Grow Smarter?
@@ -144,12 +144,12 @@ const CarouselAds: React.FC = () => {
                         <a href="https://www.ScaleDM.io" target="_blank" rel="noreferrer" className="text-black underline decoration-[#1e73ff] underline-offset-4">www.ScaleDM.io</a>
                       </div>
                     </div>
-                    <div className="relative flex-1 mt-4 flex items-start justify-center px-6 sm:px-10 pt-4 sm:pt-6">
+                    <div className="relative mt-0 flex items-center justify-center px-6 sm:px-10 pt-0 h-[75%] sm:h-[75%] md:h-[75%]">
                       {slides[index].image && (
                         <img
                           src={slides[index].image}
                           alt="Happy users"
-                          className="max-h-[65%] w-auto object-contain rounded-[32px]"
+                          className="max-h-full w-auto object-contain rounded-[32px]"
                           loading="lazy"
                         />
                       )}

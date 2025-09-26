@@ -1,667 +1,257 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-interface Feature {
-  id: string;
-  title: string;
-  description: string;
-  tier: 'free' | 'pro';
-  icon: React.ReactNode;
-  iconStyle: {
-    background: string;
-    gradient: string;
-    shadow: string;
-    shape: string;
-  };
-}
-
-// SVG Icon Components
-const PostIcon = () => (
-  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-    <path d="M8 12h8"/>
-    <path d="M8 8h8"/>
-    <path d="M8 16h5"/>
-  </svg>
-);
-
-const ReelsIcon = () => (
-  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <rect x="2" y="3" width="20" height="18" rx="4" ry="4"/>
-    <path d="M8 3l4 5M16 3l4 5"/>
-    <path d="M2 8h20"/>
-  </svg>
-);
-
-const StoryIcon = () => (
-  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <circle cx="12" cy="12" r="10"/>
-    <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
-    <line x1="9" y1="9" x2="9.01" y2="9"/>
-    <line x1="15" y1="9" x2="15.01" y2="9"/>
-  </svg>
-);
-
-const MentionsIcon = () => (
-  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-    <circle cx="12" cy="7" r="4"/>
-    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-  </svg>
-);
-
-const AnalyticsIcon = () => (
-  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M3 3v18h18"/>
-    <path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/>
-  </svg>
-);
-
-const CommentIcon = () => (
-  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M21 15a4 4 0 0 1-4 4H7l-4 4V5a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4Z"/>
-    <path d="M8 9h8"/>
-    <path d="M8 13h6"/>
-  </svg>
-);
-
-const RewindIcon = () => (
-  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <polygon points="11 19 2 12 11 5 11 19"/>
-    <polygon points="22 19 13 12 22 5 22 19"/>
-  </svg>
-);
-
-const AdvertisingIcon = () => (
-  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-    <path d="M2 17l10 5 10-5"/>
-    <path d="M2 12l10 5 10-5"/>
-  </svg>
-);
-
-const LightningIcon = () => (
-  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-  </svg>
-);
-
-const AudienceIcon = () => (
-  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-    <circle cx="9" cy="7" r="4"/>
-    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-  </svg>
-);
-
 const FeaturesPage: React.FC = () => {
-  const features: Feature[] = [
-    // Comment Automation Features (Grouped together)
-    {
-      id: 'post-autodm',
-      title: 'Post AutoDM',
-      description: 'Automatically reply to Instagram Post comments with a DM',
-      tier: 'free',
-      icon: <PostIcon />,
-      iconStyle: {
-        background: 'from-blue-500 to-blue-600',
-        gradient: 'bg-gradient-to-br',
-        shadow: 'shadow-blue-200',
-        shape: 'rounded-xl'
-      }
-    },
-    {
-      id: 'reels-autodm',
-      title: 'Reels AutoDM',
-      description: 'Automatically reply to Instagram Reel comments with a DM',
-      tier: 'free',
-      icon: <ReelsIcon />,
-      iconStyle: {
-        background: 'from-purple-500 to-purple-600',
-        gradient: 'bg-gradient-to-br',
-        shadow: 'shadow-purple-200',
-        shape: 'rounded-2xl'
-      }
-    },
-    {
-      id: 'comment-auto-reply',
-      title: 'Comment Auto-Reply',
-      description: 'Automatically reply to comments with a comment once a DM has been sent',
-      tier: 'free',
-      icon: <CommentIcon />,
-      iconStyle: {
-        background: 'from-cyan-500 to-cyan-600',
-        gradient: 'bg-gradient-to-br',
-        shadow: 'shadow-cyan-200',
-        shape: 'rounded-2xl'
-      }
-    },
-    {
-      id: 'live-comment-dm',
-      title: 'Live Comment DM Automation',
-      description: 'Real-time comment to DM automation with instant responses',
-      tier: 'free',
-      icon: <LightningIcon />,
-      iconStyle: {
-        background: 'from-yellow-500 to-orange-500',
-        gradient: 'bg-gradient-to-br',
-        shadow: 'shadow-yellow-200',
-        shape: 'rounded-xl'
-      }
-    },
-    {
-      id: 'advertising-autodm',
-      title: 'Advertising AutoDM',
-      description: 'Auto-reply to comments on your sponsored content and ads',
-      tier: 'free',
-      icon: <AdvertisingIcon />,
-      iconStyle: {
-        background: 'from-red-500 to-red-600',
-        gradient: 'bg-gradient-to-br',
-        shadow: 'shadow-red-200',
-        shape: 'rounded-full'
-      }
-    },
-    // Story Features
-    {
-      id: 'story-autodm',
-      title: 'Story AutoDM',
-      description: 'Automatically respond to story replies with a DM',
-      tier: 'free',
-      icon: <StoryIcon />,
-      iconStyle: {
-        background: 'from-pink-500 to-pink-600',
-        gradient: 'bg-gradient-to-br',
-        shadow: 'shadow-pink-200',
-        shape: 'rounded-full'
-      }
-    },
-    {
-      id: 'story-mentions',
-      title: 'Story Mentions',
-      description: 'Automatically reply to story @mentions with a DM',
-      tier: 'free',
-      icon: <MentionsIcon />,
-      iconStyle: {
-        background: 'from-indigo-500 to-indigo-600',
-        gradient: 'bg-gradient-to-br',
-        shadow: 'shadow-indigo-200',
-        shape: 'rounded-lg'
-      }
-    },
-    // Analytics & Management
-    {
-      id: 'click-analytics',
-      title: 'Click Analytics',
-      description: 'Track link click analytics on DMs sent with detailed insights',
-      tier: 'free',
-      icon: <AnalyticsIcon />,
-      iconStyle: {
-        background: 'from-emerald-500 to-emerald-600',
-        gradient: 'bg-gradient-to-br',
-        shadow: 'shadow-emerald-200',
-        shape: 'rounded-xl'
-      }
-    },
-    {
-      id: 'rewind',
-      title: 'Rewind',
-      description: 'Backsend DMs to eligible comments you may have missed',
-      tier: 'free',
-      icon: <RewindIcon />,
-      iconStyle: {
-        background: 'from-amber-500 to-amber-600',
-        gradient: 'bg-gradient-to-br',
-        shadow: 'shadow-amber-200',
-        shape: 'rounded-lg'
-      }
-    },
-    // Pro Features
-    {
-      id: 'audience-tracking',
-      title: 'Advanced Audience Tracking',
-      description: 'Export contact information, track engagement patterns, and analyze audience demographics with detailed reports',
-      tier: 'pro',
-      icon: <AudienceIcon />,
-      iconStyle: {
-        background: 'from-slate-600 to-slate-700',
-        gradient: 'bg-gradient-to-br',
-        shadow: 'shadow-slate-300',
-        shape: 'rounded-2xl'
-      }
-    }
-  ];
-
-  // Remove the unused useEffect and visibleFeatures state
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.2
-      }
-    }
-  };
-
-  const cardVariants = {
-    hidden: { 
-      opacity: 0, 
-      y: 30,
-      scale: 0.9,
-      rotateX: -15
-    },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      scale: 1,
-      rotateX: 0,
-      transition: {
-        type: "spring" as const,
-        stiffness: 120,
-        damping: 20,
-        mass: 0.8
-      }
-    }
-  };
-
-  const iconVariants = {
-    hidden: {
-      scale: 0,
-      rotate: -180
-    },
-    visible: {
-      scale: 1,
-      rotate: 0,
-      transition: {
-        type: "spring" as const,
-        stiffness: 200,
-        damping: 15,
-        delay: 0.2
-      }
-    },
-    hover: {
-      scale: 1.15,
-      rotate: 10,
-      y: -2,
-      transition: {
-        type: "spring" as const,
-        stiffness: 400,
-        damping: 10
-      }
-    }
-  };
-
-  const titleVariants = {
-    hidden: {
-      opacity: 0,
-      x: -20
-    },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: {
-        type: "spring" as const,
-        stiffness: 100,
-        damping: 15,
-        delay: 0.1
-      }
-    }
-  };
-
-  const descriptionVariants = {
-    hidden: {
-      opacity: 0,
-      y: 10
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        type: "spring" as const,
-        stiffness: 100,
-        damping: 15,
-        delay: 0.2
-      }
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
-      {/* Header Section */}
-      <motion.div 
-        className="text-center py-12 md:py-16 px-4"
-        initial={{ opacity: 0, y: -30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ 
-          type: "spring",
-          stiffness: 100,
-          damping: 20,
-          duration: 0.8
-        }}
-      >
-        <motion.div 
-          className="text-sm font-semibold text-blue-600 uppercase tracking-wider mb-4"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ 
-            type: "spring",
-            stiffness: 200,
-            damping: 15,
-            delay: 0.2
-          }}
-        >
-          KEY FEATURES
-        </motion.div>
-        <motion.h1 
-          className="text-3xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-4 md:mb-6"
-          initial={{ opacity: 0, y: 30, rotateX: -20 }}
-          animate={{ opacity: 1, y: 0, rotateX: 0 }}
-          transition={{ 
-            type: "spring",
-            stiffness: 120,
-            damping: 20,
-            delay: 0.3
-          }}
-        >
-          Unlock The Full Potential
-        </motion.h1>
-        <motion.p 
-          className="text-base md:text-lg lg:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed px-2"
-          initial={{ opacity: 0, y: 20, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ 
-            type: "spring",
-            stiffness: 100,
-            damping: 15,
-            delay: 0.5
-          }}
-        >
-          Dive deep into ScaleDM's capabilities with these standout features, each designed to enhance your experience and streamline your tasks. Discover what sets us apart.
-        </motion.p>
-      </motion.div>
+    <div className="min-h-screen bg-gray-100 relative overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-20 h-20 bg-orange-200 rounded-full opacity-30 blur-sm"></div>
+        <div className="absolute top-40 right-20 w-16 h-16 bg-orange-300 rounded-full opacity-40 blur-sm"></div>
+        <div className="absolute bottom-40 left-1/4 w-12 h-12 bg-orange-200 rounded-full opacity-50 blur-sm"></div>
+        <div className="absolute top-60 left-1/3 w-8 h-8 bg-orange-400 rounded-full opacity-60 blur-sm"></div>
+        <div className="absolute bottom-20 right-1/3 w-6 h-6 bg-orange-300 rounded-full opacity-70 blur-sm"></div>
+      </div>
 
-      {/* Features Grid */}
-      <motion.div 
-        className="max-w-6xl mx-auto px-4 pb-16"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 max-w-5xl mx-auto">
-          {features.map((feature, index) => (
+      <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
+        <div className="max-w-6xl mx-auto">
+          {/* Header */}
+          <motion.div 
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: -30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <h1 className="text-4xl md:text-6xl font-bold text-gray-800 mb-4">
+              User Interaction Flow
+            </h1>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              See how customers interact with your Instagram posts and convert to sales
+            </p>
+          </motion.div>
+
+          {/* Main Flow Container */}
+          <div className="relative">
+            {/* Left Panel - Social Media Post */}
             <motion.div
-              key={feature.id}
-              variants={cardVariants}
-              whileHover={{ 
-                y: -8,
-                scale: 1.02,
-                rotateY: 2,
-                transition: { 
-                  type: "spring",
-                  stiffness: 300,
-                  damping: 20
-                }
-              }}
-              className="bg-white rounded-2xl p-4 md:p-6 shadow-lg border border-gray-100 hover:shadow-2xl transition-all duration-300 h-full overflow-hidden"
+              className="bg-white rounded-2xl shadow-lg p-6 mb-8 max-w-md mx-auto"
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
             >
-              <div className="flex items-start space-x-4">
-                <motion.div
-                  variants={iconVariants}
-                  whileHover="hover"
-                  className={`flex-shrink-0 w-10 h-10 md:w-12 md:h-12 ${feature.iconStyle.shape} ${feature.iconStyle.gradient} ${feature.iconStyle.background} flex items-center justify-center text-white shadow-lg ${feature.iconStyle.shadow}`}
-                >
-                  {feature.icon}
-                </motion.div>
-                <div className="flex-1 min-w-0">
-                  <motion.div 
-                    className="flex items-center space-x-2 mb-2"
-                    variants={titleVariants}
-                  >
-                    <h3 className="text-base md:text-lg font-bold text-gray-900">
-                      {feature.title}
-                    </h3>
-                    <motion.span
-                      initial={{ scale: 0, rotate: -180 }}
-                      animate={{ scale: 1, rotate: 0 }}
-                      transition={{
-                        type: "spring",
-                        stiffness: 200,
-                        damping: 15,
-                        delay: 0.3
-                      }}
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        feature.tier === 'pro' 
-                          ? 'bg-gradient-to-r from-orange-500 to-orange-600' 
-                          : 'bg-gradient-to-r from-green-500 to-green-600'
-                      } text-white shadow-md`}
-                    >
-                      {feature.tier === 'pro' ? 'PRO' : 'FREE'}
-                    </motion.span>
-                  </motion.div>
-                  <motion.p 
-                    className="text-sm text-gray-600 leading-relaxed"
-                    variants={descriptionVariants}
-                  >
-                    {feature.description}
-                  </motion.p>
+              {/* Post Header */}
+              <div className="flex items-center mb-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm mr-3">
+                  W
+                </div>
+                <div className="flex-1">
+                  <div className="font-semibold text-gray-800">watch_shop</div>
+                </div>
+                <div className="text-gray-400">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
+                  </svg>
                 </div>
               </div>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
 
-      {/* Pricing Section */}
-      <motion.div 
-        className="bg-white py-16"
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ 
-          type: "spring",
-          stiffness: 100,
-          damping: 20,
-          duration: 0.8
-        }}
-        viewport={{ once: true, margin: "-100px" }}
-      >
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <motion.h2 
-            className="text-3xl md:text-4xl font-bold text-blue-600 mb-4"
-            initial={{ opacity: 0, y: 30, scale: 0.9 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ 
-              type: "spring",
-              stiffness: 120,
-              damping: 20,
-              delay: 0.2
-            }}
-          >
-            Pricing
-          </motion.h2>
-          <motion.p 
-            className="text-lg text-gray-600 mb-12 max-w-2xl mx-auto"
-            initial={{ opacity: 0, y: 20, rotateX: -10 }}
-            whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-            transition={{ 
-              type: "spring",
-              stiffness: 100,
-              damping: 15,
-              delay: 0.4
-            }}
-          >
-            Get unlimited Instagram automation completely free. Upgrade to Pro for advanced audience insights and analytics.
-          </motion.p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {/* Free Tier */}
-            <motion.div
-              className="bg-white rounded-3xl p-8 shadow-lg border-2 border-gray-100 relative"
-              initial={{ opacity: 0, x: -30, rotateY: -15 }}
-              whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
-              transition={{ 
-                type: "spring",
-                stiffness: 100,
-                damping: 20,
-                delay: 0.6
-              }}
-              whileHover={{ 
-                y: -8, 
-                scale: 1.02,
-                rotateY: 2,
-                transition: { 
-                  type: "spring",
-                  stiffness: 300,
-                  damping: 20
-                }
-              }}
-            >
-              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                <span className="bg-green-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
-                  FREE TIER
-                </span>
-              </div>
-              <div className="text-center mt-4">
-                <h3 className="text-3xl font-bold text-green-600 mb-6">Free</h3>
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-full">
-                    <span className="text-2xl">🚀</span>
-                    <span className="text-gray-700 font-medium">All automation features</span>
+              {/* Ad Content */}
+              <div className="relative bg-white border-2 border-gray-200 rounded-xl p-4 mb-4">
+                {/* Brick wall background effect */}
+                <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl opacity-50"></div>
+                
+                {/* Ad Text */}
+                <div className="relative z-10">
+                  <div className="text-orange-600 font-bold text-lg mb-2" style={{ fontFamily: 'cursive' }}>
+                    Only This Week!
                   </div>
-                  <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-full">
-                    <span className="text-2xl">⚡</span>
-                    <span className="text-gray-700 font-medium">No usage limits</span>
+                  <div className="text-2xl font-black text-gray-800 mb-2">
+                    Black Friday
                   </div>
-                  <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-full">
-                    <span className="text-2xl">💳</span>
-                    <span className="text-gray-700 font-medium">No credit card required</span>
+                  <div className="bg-red-600 text-white text-center py-1 px-3 rounded text-sm font-bold mb-4">
+                    MEGA SALE
+                  </div>
+                  
+                  {/* Watch Image Placeholder */}
+                  <div className="flex justify-center mb-4">
+                    <div className="w-32 h-32 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full flex items-center justify-center">
+                      <div className="w-24 h-24 bg-gray-400 rounded-full flex items-center justify-center">
+                        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
+                          <div className="w-8 h-8 bg-gray-600 rounded-full"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Order Button */}
+                  <div className="bg-red-600 text-white text-center py-2 px-4 rounded-lg font-bold mb-2">
+                    ORDER NOW
+                  </div>
+                  
+                  {/* Contact Info */}
+                  <div className="text-sm text-gray-600 mb-2">323-517-4946</div>
+                  <div className="text-sm text-gray-600">www.yourwebsite.com</div>
+                  
+                  {/* Discount Badge */}
+                  <div className="absolute top-2 right-2 bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                    50% OFF
                   </div>
                 </div>
+              </div>
+
+              {/* Social Media Actions */}
+              <div className="flex items-center space-x-6 mb-3">
+                <svg className="w-6 h-6 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd"/>
+                </svg>
+                <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                </svg>
+                <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                </svg>
+                <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                </svg>
+              </div>
+
+              {/* Call to Action */}
+              <div className="text-sm text-gray-600">
+                Comment "Order" to buy the watch !!!
               </div>
             </motion.div>
 
-            {/* Paid Tier */}
+            {/* Arrow 1 - From post to comment */}
             <motion.div
-              className="bg-white rounded-3xl p-8 shadow-lg border-2 border-blue-200 relative"
-              initial={{ opacity: 0, x: 30, rotateY: 15 }}
-              whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
-              transition={{ 
-                type: "spring",
-                stiffness: 100,
-                damping: 20,
-                delay: 0.8
-              }}
-              whileHover={{ 
-                y: -8, 
-                scale: 1.02,
-                rotateY: -2,
-                transition: { 
-                  type: "spring",
-                  stiffness: 300,
-                  damping: 20
-                }
-              }}
+              className="flex justify-center mb-4"
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 1 }}
             >
-              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                <span className="bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
-                  PRO TIER
-                </span>
+              <div className="flex items-center">
+                <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+                <svg className="w-8 h-8 text-orange-500 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" strokeDasharray="5,5"/>
+                </svg>
+                <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
               </div>
-              <div className="text-center mt-4">
-                <div className="flex items-baseline justify-center mb-6">
-                  <span className="text-4xl font-bold text-blue-600">$10</span>
-                  <span className="text-gray-600 ml-2">/month</span>
+            </motion.div>
+
+            {/* Bottom Panel - Comment Reply */}
+            <motion.div
+              className="bg-white rounded-2xl shadow-lg p-4 mb-8 max-w-md mx-auto"
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 1.2 }}
+            >
+              <div className="flex items-center mb-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-pink-400 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-xs mr-3">
+                  J
                 </div>
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-full">
-                    <span className="text-2xl">✨</span>
-                    <span className="text-gray-700 font-medium">Everything in free tier</span>
+                <div className="flex-1">
+                  <div className="font-semibold text-gray-800 text-sm">johnsie_jock_01</div>
+                </div>
+                <div className="text-xs text-gray-400 mr-2">3d</div>
+                <svg className="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd"/>
+                </svg>
+              </div>
+              
+              <div className="text-gray-800 font-medium mb-2">Order</div>
+              <div className="text-xs text-gray-500">Just Now Reply</div>
+            </motion.div>
+
+            {/* Arrow 2 - From comment to product page */}
+            <motion.div
+              className="flex justify-center mb-4"
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 1.4 }}
+            >
+              <div className="flex items-center">
+                <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+                <svg className="w-8 h-8 text-orange-500 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" strokeDasharray="5,5"/>
+                </svg>
+                <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+              </div>
+            </motion.div>
+
+            {/* Right Panel - Product Page/DM */}
+            <motion.div
+              className="bg-white rounded-2xl shadow-lg p-6 max-w-md mx-auto"
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 1.6 }}
+            >
+              {/* Header with back button */}
+              <div className="flex items-center mb-4">
+                <svg className="w-6 h-6 text-gray-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                <div className="w-8 h-8 bg-gradient-to-br from-pink-400 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-xs mr-3">
+                  J
+                </div>
+                <div className="font-semibold text-gray-800">johnsie_jock_01</div>
+              </div>
+
+              {/* Product Content */}
+              <div className="relative bg-white border-2 border-gray-200 rounded-xl p-4 mb-4">
+                {/* Brick wall background effect */}
+                <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl opacity-50"></div>
+                
+                {/* Ad Text */}
+                <div className="relative z-10">
+                  <div className="text-orange-600 font-bold text-lg mb-2" style={{ fontFamily: 'cursive' }}>
+                    Only This Week!
                   </div>
-                  <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-full">
-                    <span className="text-2xl">📈</span>
-                    <span className="text-gray-700 font-medium">Advanced audience tracking</span>
+                  <div className="text-2xl font-black text-gray-800 mb-2">
+                    Black Friday
                   </div>
-                  <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-full">
-                    <span className="text-2xl">⏰</span>
-                    <span className="text-gray-700 font-medium">Cancel anytime</span>
+                  <div className="bg-red-600 text-white text-center py-1 px-3 rounded text-sm font-bold mb-4">
+                    MEGA SALE
+                  </div>
+                  
+                  {/* Watch Image Placeholder */}
+                  <div className="flex justify-center mb-4">
+                    <div className="w-32 h-32 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full flex items-center justify-center">
+                      <div className="w-24 h-24 bg-gray-400 rounded-full flex items-center justify-center">
+                        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
+                          <div className="w-8 h-8 bg-gray-600 rounded-full"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Contact Info */}
+                  <div className="text-sm text-gray-600 mb-4">333-377-494</div>
+                  
+                  {/* Product Description Lines */}
+                  <div className="space-y-2 mb-4">
+                    <div className="h-2 bg-gray-300 rounded"></div>
+                    <div className="h-2 bg-gray-300 rounded w-3/4"></div>
+                    <div className="h-2 bg-gray-300 rounded w-1/2"></div>
+                  </div>
+                  
+                  {/* Buy Now Button */}
+                  <div className="bg-white border-2 border-gray-800 text-gray-800 text-center py-3 px-6 rounded-lg font-bold mb-4">
+                    Buy Now!
+                  </div>
+                  
+                  {/* Discount Badge */}
+                  <div className="absolute top-2 right-2 bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                    50% OFF
+                  </div>
+                  
+                  {/* Logo */}
+                  <div className="absolute bottom-2 left-2 w-6 h-6 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs">
+                    W
                   </div>
                 </div>
               </div>
             </motion.div>
           </div>
         </div>
-      </motion.div>
-
-      {/* CTA Section */}
-      <motion.div 
-        className="bg-gradient-to-r from-blue-600 to-blue-700 py-16"
-        initial={{ opacity: 0, y: 50, scale: 0.95 }}
-        whileInView={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ 
-          type: "spring",
-          stiffness: 100,
-          damping: 20,
-          duration: 0.8
-        }}
-        viewport={{ once: true, margin: "-50px" }}
-      >
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <motion.h2 
-            className="text-3xl md:text-4xl font-bold text-white mb-4"
-            initial={{ opacity: 0, y: 30, rotateX: -20 }}
-            whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
-            transition={{ 
-              type: "spring",
-              stiffness: 120,
-              damping: 20,
-              delay: 0.2
-            }}
-          >
-            Ready to Scale Your Instagram?
-          </motion.h2>
-          <motion.p 
-            className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto"
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ 
-              type: "spring",
-              stiffness: 100,
-              damping: 15,
-              delay: 0.4
-            }}
-          >
-            Join thousands of creators and businesses who are already automating their Instagram engagement.
-          </motion.p>
-          <motion.button
-            className="bg-white text-blue-600 font-bold py-4 px-8 rounded-full text-lg shadow-lg hover:shadow-xl transform transition-all duration-200"
-            initial={{ opacity: 0, y: 20, scale: 0.8 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ 
-              type: "spring",
-              stiffness: 200,
-              damping: 15,
-              delay: 0.6
-            }}
-            whileHover={{ 
-              scale: 1.08,
-              y: -2,
-              transition: { 
-                type: "spring",
-                stiffness: 400,
-                damping: 10
-              }
-            }}
-            whileTap={{ 
-              scale: 0.95,
-              transition: { duration: 0.1 }
-            }}
-          >
-            Get Started Free
-          </motion.button>
-        </div>
-      </motion.div>
+      </div>
     </div>
   );
 };
