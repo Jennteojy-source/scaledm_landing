@@ -36,52 +36,7 @@ const ScaleDMAutomation: React.FC = () => {
     }
   };
 
-  // Line-by-line reveal and pre-exit for slide 2
-  const LineRevealText: React.FC<{ lines: string[]; colorClass: string; slideDurationMs?: number; }>
-    = ({ lines, colorClass, slideDurationMs }) => {
-    const [active, setActive] = useState<boolean[]>(() => lines.map(() => true));
-
-    useEffect(() => {
-      if (!slideDurationMs) return;
-      const preExitStart = Math.max(0, slideDurationMs - 700);
-      const timers: number[] = [];
-
-      timers.push(window.setTimeout(() => {
-        // remove lines one-by-one from bottom to top
-        for (let i = lines.length - 1; i >= 0; i--) {
-          timers.push(window.setTimeout(() => {
-            setActive(prev => prev.map((v, idx) => idx === i ? false : v));
-          }, (lines.length - 1 - i) * 130));
-        }
-      }, preExitStart));
-
-      return () => timers.forEach(t => window.clearTimeout(t));
-    }, [lines, slideDurationMs]);
-
-    const container = {
-      hidden: { opacity: 1 },
-      show: { opacity: 1, transition: { staggerChildren: 0.12 } }
-    };
-    const line = {
-      hidden: { opacity: 0, y: 12 },
-      show: { opacity: 1, y: 0, transition: { duration: 0.4 } },
-      exit: { opacity: 0, y: -12, transition: { duration: 0.32 } }
-    };
-
-    return (
-      <motion.div className="space-y-3" variants={container} initial="hidden" animate="show">
-        <AnimatePresence>
-          {lines.map((ln, idx) => (
-            active[idx] ? (
-              <motion.div key={idx} variants={line} exit="exit">
-                <span className={`${colorClass}`}>{ln}</span>
-              </motion.div>
-            ) : null
-          ))}
-        </AnimatePresence>
-      </motion.div>
-    );
-  };
+  // (Slide 2 special per-line animation removed; using standard headline rendering)
 
   const slides = [
     {
@@ -95,11 +50,6 @@ const ScaleDMAutomation: React.FC = () => {
     {
       id: 2,
       text: "This drives engagement, signaling Instagram's algorithm to show their content to more people",
-      lines: [
-        "This drives engagement,",
-        "signaling Instagram's algorithm",
-        "to show their content to more people"
-      ],
       subtitle: "Smart creators know the secret",
       bgColor: "bg-gradient-to-br from-[#8B5CF6] via-[#7c3aed] to-[#6d28d9]",
       textColor: "text-white",
@@ -204,7 +154,8 @@ const ScaleDMAutomation: React.FC = () => {
       return;
     }
 
-    const durationSeconds = (slideDurations[currentSlide] ?? 4) + interSlideGapSeconds;
+    const extraForSlide2 = currentSlide === 1 ? 0.5 : 0;
+    const durationSeconds = (slideDurations[currentSlide] ?? 4) + interSlideGapSeconds + extraForSlide2;
     timerRef.current = setTimeout(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, durationSeconds * 1000);
@@ -415,13 +366,7 @@ const ScaleDMAutomation: React.FC = () => {
                       variants={slideVariants[currentSlideData.animation]}
                       transition={{ delay: 0.4, duration: 1.0, ease: "easeOut" }}
                     >
-                      {currentSlide === 1 && (currentSlideData as any).lines ? (
-                        <LineRevealText
-                          lines={(currentSlideData as any).lines}
-                          colorClass={currentSlideData.textColor}
-                          slideDurationMs={(slideDurations[currentSlide] ?? 4) * 1000}
-                        />
-                      ) : currentSlideData.text}
+                      {currentSlideData.text}
                     </motion.h1>
                     
                     {/* Animated Thumbs Down for Slide 6 (CTA Direction) */}
