@@ -40,6 +40,14 @@ const ScaleDMAutomation: React.FC = () => {
 
   const slides = useMemo(() => [
     {
+      id: 0,
+      text: "", // Empty slide to start with
+      bgColor: "bg-gradient-to-br from-[#00D4FF] via-[#0ea5e9] to-[#0284c7]",
+      textColor: "text-white",
+      animation: "fadeInUp",
+      accent: "from-[#00D4FF]"
+    },
+    {
       id: 1,
       text: "Ever wonder why IG creators ask you to comment keywords for links? 🤔",
       bgColor: "bg-gradient-to-br from-[#00D4FF] via-[#0ea5e9] to-[#0284c7]",
@@ -93,12 +101,13 @@ const ScaleDMAutomation: React.FC = () => {
   // Optimized slide durations for enhanced content
   const slideDurations = useMemo(() => {
     const SLIDE_DURATIONS = {
+      0: 1.0, // Empty intro slide
       1: 4.0, // Question slide - longer for engagement
-      2: 4.5, // Explanation slide - more detailed content
-      3: 3.5, // Setup slide - compelling free offer
-      4: 3.0, // Approval slide - trust building
-      5: 3.5, // Coverage slide - detailed benefits
-      6: 5.0  // CTA slide - typewriter effect needs more time
+      2: 4.0, // Explanation slide - more detailed content
+      3: 4.0, // Setup slide - compelling free offer
+      4: 4.0, // Approval slide - trust building
+      5: 4.0, // Coverage slide - detailed benefits
+      6: 5.0  // CTA slide - elegant fade-in effect
     };
 
     return slides.map((slide) => SLIDE_DURATIONS[slide.id as keyof typeof SLIDE_DURATIONS] || 3.0);
@@ -113,7 +122,7 @@ const ScaleDMAutomation: React.FC = () => {
       clearTimeout(timerRef.current);
     }
 
-    const extraForSlide2 = currentSlide === 1 ? 0.5 : 0;
+    const extraForSlide2 = currentSlide === 2 ? 0.5 : 0;
     const durationSeconds = (slideDurations[currentSlide] ?? 4) + interSlideGapSeconds + extraForSlide2;
 
     timerRef.current = setTimeout(() => {
@@ -130,6 +139,11 @@ const ScaleDMAutomation: React.FC = () => {
       return;
     }
 
+    // Clear any existing timer
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+
     scheduleNextSlide();
 
     return () => {
@@ -141,6 +155,7 @@ const ScaleDMAutomation: React.FC = () => {
   }, [isPlaying, isPaused, scheduleNextSlide]);
 
   const handleStart = () => {
+    setCurrentSlide(0); // Ensure we start from the first slide
     setIsPlaying(true);
     setIsPaused(false);
   };
@@ -388,96 +403,109 @@ const ScaleDMAutomation: React.FC = () => {
                   />
 
                   <div className="text-center px-6 sm:px-8 md:px-12 relative z-10">
-                    {/* Enhanced Subtitle Animation */}
-                    {currentSlideData.subtitle && (
-                      <motion.div
-                        className="mb-6"
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 0.9, y: 0 }}
-                        transition={{ delay: 0.2, duration: 0.6, ease: "easeOut" }}
-                      >
-                        <p className={`text-lg md:text-xl font-semibold ${currentSlideData.textColor} tracking-wider leading-relaxed`}
-                           style={{
-                             textShadow: '0 2px 8px rgba(0,0,0,0.4), 0 1px 3px rgba(0,0,0,0.3)',
-                             filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.2))'
-                           }}>
-                          {currentSlideData.subtitle}
-                        </p>
-                      </motion.div>
-                    )}
+                    {/* Only show text content for slides 1-6, not slide 0 */}
+                    {currentSlide > 0 && (
+                      <>
+                        {/* Enhanced Subtitle Animation */}
+                        {currentSlideData.subtitle && (
+                          <motion.div
+                            className="mb-6"
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 0.9, y: 0 }}
+                            transition={{ delay: 0.2, duration: 0.6, ease: "easeOut" }}
+                          >
+                            <p className={`text-lg md:text-xl font-semibold ${currentSlideData.textColor} tracking-wider leading-relaxed`}
+                               style={{
+                                 textShadow: '0 2px 8px rgba(0,0,0,0.4), 0 1px 3px rgba(0,0,0,0.3)',
+                                 filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.2))'
+                               }}>
+                              {currentSlideData.subtitle}
+                            </p>
+                          </motion.div>
+                        )}
 
-                    {/* Dynamic Text Animation with Enhanced Styling */}
-                    <div className="max-w-[90%] mx-auto">
-                      {currentSlide === 5 ? (
-                        /* Typewriter Effect for Final CTA */
-                        <motion.div
-                          className={`font-black tracking-tight ${currentSlideData.textColor}`}
-                          style={{
-                            fontSize: aspect === '9:16' ? 'clamp(18px, 4.5vw, 32px)' : 'clamp(22px, 3.5vw, 36px)',
-                            lineHeight: aspect === '9:16' ? '1.3' : '1.2',
-                            textAlign: 'center',
-                            textShadow: '0 0 25px rgba(255,255,255,0.4), 0 4px 12px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.3)',
-                            WebkitTextStroke: '1px rgba(0,0,0,0.15)',
-                            filter: 'drop-shadow(0 0 20px rgba(255,255,255,0.3))'
-                          }}
-                          initial={{ width: 0, opacity: 0 }}
-                          animate={{ width: '100%', opacity: 1 }}
-                          transition={{
-                            width: { duration: 2.5, ease: "easeOut" },
-                            opacity: { duration: 0.8, delay: 0.3 }
-                          }}
-                        >
-                          {currentSlideData.text}
-                        </motion.div>
-                      ) : (
-                        /* Staggered Word Animation for Other Slides */
-                        <div
-                          className={`font-black leading-tight tracking-tight ${currentSlideData.textColor}`}
-                          style={{
-                            fontSize: aspect === '9:16' ? 'clamp(16px, 4vw, 28px)' : 'clamp(20px, 3vw, 32px)',
-                            lineHeight: aspect === '9:16' ? '1.3' : '1.2',
-                            textAlign: 'center',
-                            textWrap: 'balance'
-                          }}
-                        >
-                          {currentSlideData.text.split(' ').map((word, index) => (
-                            <motion.span
-                              key={index}
-                              className={`inline-block ${
-                                // Add extra spacing for longer words and punctuation
-                                word.length > 6 || /[.!?]/.test(word) ? 'mr-2' : 'mr-1'
-                              }`}
+                        {/* Dynamic Text Animation with Enhanced Styling */}
+                        <div className="max-w-[90%] mx-auto">
+                          {currentSlide === 6 ? (
+                            /* Elegant Fade-in with Glow Effect for Final CTA */
+                            <motion.div
+                              className={`font-black tracking-tight ${currentSlideData.textColor}`}
                               style={{
-                                textShadow: '0 0 20px rgba(255,255,255,0.3), 0 4px 12px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.3)',
-                                WebkitTextStroke: '1px rgba(0,0,0,0.1)',
-                                filter: 'drop-shadow(0 0 15px rgba(255,255,255,0.2))'
+                                fontSize: aspect === '9:16' ? 'clamp(18px, 4.5vw, 32px)' : 'clamp(22px, 3.5vw, 36px)',
+                                lineHeight: aspect === '9:16' ? '1.3' : '1.2',
+                                textAlign: 'center',
+                                textShadow: '0 0 25px rgba(255,255,255,0.4), 0 4px 12px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.3)',
+                                WebkitTextStroke: '1px rgba(0,0,0,0.15)',
+                                filter: 'drop-shadow(0 0 20px rgba(255,255,255,0.3))'
                               }}
                               initial={{
                                 opacity: 0,
                                 y: 30,
-                                scale: 0.8,
-                                rotateX: -15
+                                scale: 0.9
                               }}
                               animate={{
                                 opacity: 1,
                                 y: 0,
-                                scale: 1,
-                                rotateX: 0
+                                scale: 1
                               }}
                               transition={{
-                                delay: 0.4 + (index * 0.06),
-                                duration: 0.7,
+                                duration: 1.2,
                                 ease: [0.16, 1, 0.3, 1]
                               }}
                             >
-                              {word}
-                            </motion.span>
-                          ))}
+                              {currentSlideData.text}
+                            </motion.div>
+                          ) : (
+                            /* Staggered Word Animation for Other Slides */
+                            <div
+                              className={`font-black leading-tight tracking-tight ${currentSlideData.textColor}`}
+                              style={{
+                                fontSize: aspect === '9:16' ? 'clamp(16px, 4vw, 28px)' : 'clamp(20px, 3vw, 32px)',
+                                lineHeight: aspect === '9:16' ? '1.3' : '1.2',
+                                textAlign: 'center',
+                                textWrap: 'balance'
+                              }}
+                            >
+                              {currentSlideData.text.split(' ').map((word, index) => (
+                                <motion.span
+                                  key={index}
+                                  className={`inline-block ${
+                                    // Add extra spacing for longer words and punctuation
+                                    word.length > 6 || /[.!?]/.test(word) ? 'mr-2' : 'mr-1'
+                                  }`}
+                                  style={{
+                                    textShadow: '0 0 20px rgba(255,255,255,0.3), 0 4px 12px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.3)',
+                                    WebkitTextStroke: '1px rgba(0,0,0,0.1)',
+                                    filter: 'drop-shadow(0 0 15px rgba(255,255,255,0.2))'
+                                  }}
+                                  initial={{
+                                    opacity: 0,
+                                    y: 30,
+                                    scale: 0.8,
+                                    rotateX: -15
+                                  }}
+                                  animate={{
+                                    opacity: 1,
+                                    y: 0,
+                                    scale: 1,
+                                    rotateX: 0
+                                  }}
+                                  transition={{
+                                    delay: 0.4 + (index * 0.06),
+                                    duration: 0.7,
+                                    ease: [0.16, 1, 0.3, 1]
+                                  }}
+                                >
+                                  {word}
+                                </motion.span>
+                              ))}
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
+                      </>
+                    )}
                     {/* Enhanced CTA arrow for final slide */}
-                    {currentSlide === 5 && (
+                    {currentSlide === 6 && (
                       <motion.div
                         className="mt-8"
                         initial={{ opacity: 0, y: 20, scale: 0.8 }}
