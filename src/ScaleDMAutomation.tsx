@@ -38,10 +38,10 @@ const ScaleDMAutomation: React.FC = () => {
 
   // (Slide 2 special per-line animation removed; using standard headline rendering)
 
-  const slides = [
+  const slides = useMemo(() => [
     {
       id: 1,
-      text: "Ever see IG creators ask you to comment keywords for a link?",
+      text: "Ever wonder why IG creators ask you to comment keywords for links? 🤔",
       bgColor: "bg-gradient-to-br from-[#00D4FF] via-[#0ea5e9] to-[#0284c7]",
       textColor: "text-white",
       animation: "slideInFromLeft",
@@ -49,8 +49,8 @@ const ScaleDMAutomation: React.FC = () => {
     },
     {
       id: 2,
-      text: "This drives engagement, signaling Instagram's algorithm to show their content to more people",
-      subtitle: "Smart creators know the secret",
+      text: "This simple trick drives massive engagement and tells Instagram's algorithm to show their content to MORE people",
+      subtitle: "Smart creators know the secret to viral growth",
       bgColor: "bg-gradient-to-br from-[#8B5CF6] via-[#7c3aed] to-[#6d28d9]",
       textColor: "text-white",
       animation: "slideInFromRight",
@@ -58,7 +58,7 @@ const ScaleDMAutomation: React.FC = () => {
     },
     {
       id: 3,
-      text: "Set up this automation for yourself. Completely free",
+      text: "Now YOU can set up this exact automation. 100% FREE. No catches. No limits.",
       bgColor: "bg-gradient-to-br from-[#00D4FF] via-[#0ea5e9] to-[#0284c7]",
       textColor: "text-white",
       animation: "scaleInBounce",
@@ -66,7 +66,7 @@ const ScaleDMAutomation: React.FC = () => {
     },
     {
       id: 4,
-      text: "Yes, and it's Meta approved",
+      text: "✅ Meta approved and Instagram compliant - completely safe to use",
       bgColor: "bg-gradient-to-br from-[#1877f2] via-[#42a5f5] to-[#1e40af]",
       textColor: "text-white",
       animation: "scaleInBounce",
@@ -74,7 +74,7 @@ const ScaleDMAutomation: React.FC = () => {
     },
     {
       id: 5,
-      text: "We've got you covered",
+      text: "We'll handle everything - from setup to monitoring. You just watch your engagement soar.",
       bgColor: "bg-gradient-to-br from-[#8B5CF6] via-[#7c3aed] to-[#6d28d9]",
       textColor: "text-white",
       animation: "fadeInUp",
@@ -82,23 +82,23 @@ const ScaleDMAutomation: React.FC = () => {
     },
     {
       id: 6,
-      text: "Start automating your engagement. Join ScaleDM for free",
+      text: "🚀 Start automating today. Join ScaleDM - FREE. No credit card required.",
       bgColor: "bg-gradient-to-br from-[#00D4FF] via-[#8B5CF6] to-[#00D4FF]",
       textColor: "text-white",
       animation: "typewriter",
       accent: "from-[#00D4FF]"
     }
-  ];
+  ], []);
 
-  // Simplified and optimized slide durations for better video ad performance
+  // Optimized slide durations for enhanced content
   const slideDurations = useMemo(() => {
     const SLIDE_DURATIONS = {
-      1: 3.5, // Question slide
-      2: 4.0, // Explanation slide
-      3: 3.0, // Setup slide
-      4: 2.5, // Approval slide
-      5: 1.5, // Coverage slide
-      6: 4.0  // CTA slide
+      1: 4.0, // Question slide - longer for engagement
+      2: 4.5, // Explanation slide - more detailed content
+      3: 3.5, // Setup slide - compelling free offer
+      4: 3.0, // Approval slide - trust building
+      5: 3.5, // Coverage slide - detailed benefits
+      6: 5.0  // CTA slide - typewriter effect needs more time
     };
 
     return slides.map((slide) => SLIDE_DURATIONS[slide.id as keyof typeof SLIDE_DURATIONS] || 3.0);
@@ -275,91 +275,220 @@ const ScaleDMAutomation: React.FC = () => {
                     staggerChildren: 0.08
                   }}
                 >
-                  {/* Animated background elements */}
-                  <div className="absolute inset-0">
-                    <motion.div 
+                  {/* Enhanced animated background elements */}
+                  <div className="absolute inset-0 overflow-hidden">
+                    <motion.div
                       className={`absolute top-10 left-10 w-32 h-32 bg-gradient-to-br ${currentSlideData.accent} opacity-20 rounded-full blur-2xl`}
-                      animate={{ 
-                        scale: [1, 1.2, 1],
-                        opacity: [0.2, 0.4, 0.2]
-                      }}
-                      transition={{ 
-                        duration: 3,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                    />
-                    <motion.div 
-                      className={`absolute bottom-10 right-10 w-24 h-24 bg-gradient-to-br ${currentSlideData.accent} opacity-30 rounded-full blur-xl`}
-                      animate={{ 
-                        y: [0, -20, 0],
-                        scale: [1, 1.1, 1]
-                      }}
-                      transition={{ 
-                        duration: 2.5,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                    />
-                    <motion.div 
-                      className={`absolute top-1/2 left-1/4 w-16 h-16 bg-gradient-to-br ${currentSlideData.accent} opacity-25 rounded-full blur-lg`}
-                      animate={{ 
+                      animate={{
                         scale: [1, 1.3, 1],
-                        opacity: [0.25, 0.5, 0.25]
+                        opacity: [0.15, 0.35, 0.15],
+                        rotate: [0, 180, 360]
                       }}
-                      transition={{ 
+                      transition={{
                         duration: 4,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    />
+                    <motion.div
+                      className={`absolute bottom-10 right-10 w-28 h-28 bg-gradient-to-br ${currentSlideData.accent} opacity-25 rounded-full blur-xl`}
+                      animate={{
+                        y: [0, -25, 0],
+                        scale: [1, 1.2, 1],
+                        x: [0, 10, 0]
+                      }}
+                      transition={{
+                        duration: 3.5,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    />
+                    <motion.div
+                      className={`absolute top-1/2 left-1/4 w-20 h-20 bg-gradient-to-br ${currentSlideData.accent} opacity-30 rounded-full blur-lg`}
+                      animate={{
+                        scale: [1, 1.4, 1],
+                        opacity: [0.2, 0.45, 0.2],
+                        rotate: [0, -120, -240, -360]
+                      }}
+                      transition={{
+                        duration: 5,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    />
+                    {/* Additional floating elements */}
+                    <motion.div
+                      className="absolute top-1/4 right-1/4 w-4 h-4 bg-white/40 rounded-full"
+                      animate={{
+                        y: [0, -15, 0],
+                        opacity: [0.4, 0.8, 0.4]
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    />
+                    <motion.div
+                      className="absolute bottom-1/3 left-1/3 w-3 h-3 bg-white/30 rounded-full"
+                      animate={{
+                        scale: [1, 1.5, 1],
+                        opacity: [0.3, 0.7, 0.3]
+                      }}
+                      transition={{
+                        duration: 2.5,
                         repeat: Infinity,
                         ease: "easeInOut"
                       }}
                     />
                   </div>
                   
-                  <div className="text-center px-4 sm:px-6 relative z-10">
-                    {/* Smooth Subtitle Animation */}
+                  {/* Enhanced backdrop with floating elements */}
+                  <div
+                    className="absolute inset-0 bg-black/10 backdrop-blur-[1px] rounded-lg"
+                    style={{ zIndex: 1 }}
+                  />
+
+                  {/* Floating decorative elements */}
+                  <motion.div
+                    className="absolute top-4 right-4 w-3 h-3 bg-white/30 rounded-full"
+                    animate={{
+                      y: [0, -10, 0],
+                      opacity: [0.3, 0.7, 0.3]
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  />
+                  <motion.div
+                    className="absolute bottom-4 left-4 w-2 h-2 bg-white/20 rounded-full"
+                    animate={{
+                      scale: [1, 1.5, 1],
+                      opacity: [0.2, 0.5, 0.2]
+                    }}
+                    transition={{
+                      duration: 2.5,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  />
+                  <motion.div
+                    className="absolute top-1/3 right-8 w-1.5 h-1.5 bg-white/25 rounded-full"
+                    animate={{
+                      x: [0, 5, 0],
+                      opacity: [0.25, 0.6, 0.25]
+                    }}
+                    transition={{
+                      duration: 4,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  />
+
+                  <div className="text-center px-6 sm:px-8 md:px-12 relative z-10">
+                    {/* Enhanced Subtitle Animation */}
                     {currentSlideData.subtitle && (
-                      <motion.div 
-                        className="mb-4"
+                      <motion.div
+                        className="mb-6"
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 0.9, y: 0 }}
                         transition={{ delay: 0.2, duration: 0.6, ease: "easeOut" }}
                       >
-                        <p className={`text-base md:text-lg font-medium ${currentSlideData.textColor} tracking-wide`}>
+                        <p className={`text-lg md:text-xl font-semibold ${currentSlideData.textColor} tracking-wider leading-relaxed`}
+                           style={{
+                             textShadow: '0 2px 8px rgba(0,0,0,0.4), 0 1px 3px rgba(0,0,0,0.3)',
+                             filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.2))'
+                           }}>
                           {currentSlideData.subtitle}
                         </p>
                       </motion.div>
                     )}
-                    
-                    {/* Smooth Main Text Animation with balanced wrapping */}
-                    <motion.h1 
-                      className={`text-xl md:text-2xl lg:text-3xl xl:text-4xl font-black leading-[1.2] tracking-tight ${currentSlideData.textColor} max-w-[95%] mx-auto`}
-                      style={{
-                        textShadow: '0 4px 8px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.2)',
-                        textAlign: 'center',
-                        textWrap: 'balance',
-                        fontSize: 'clamp(18px, 3.2vw, 36px)'
-                      }}
-                      initial="initial"
-                      animate="animate"
-                      variants={slideVariants[currentSlideData.animation as keyof typeof slideVariants]}
-                      transition={{ delay: 0.4, duration: 1.0, ease: "easeOut" }}
-                    >
-                      {currentSlideData.text}
-                    </motion.h1>
-                    
-                    {/* Animated Thumbs Down for Slide 6 (CTA Direction) */}
+
+                    {/* Dynamic Text Animation with Enhanced Styling */}
+                    <div className="max-w-[90%] mx-auto">
+                      {currentSlide === 5 ? (
+                        /* Typewriter Effect for Final CTA */
+                        <motion.div
+                          className={`font-black tracking-tight ${currentSlideData.textColor}`}
+                          style={{
+                            fontSize: aspect === '9:16' ? 'clamp(18px, 4.5vw, 32px)' : 'clamp(22px, 3.5vw, 36px)',
+                            lineHeight: aspect === '9:16' ? '1.3' : '1.2',
+                            textAlign: 'center',
+                            textShadow: '0 0 25px rgba(255,255,255,0.4), 0 4px 12px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.3)',
+                            WebkitTextStroke: '1px rgba(0,0,0,0.15)',
+                            filter: 'drop-shadow(0 0 20px rgba(255,255,255,0.3))'
+                          }}
+                          initial={{ width: 0, opacity: 0 }}
+                          animate={{ width: '100%', opacity: 1 }}
+                          transition={{
+                            width: { duration: 2.5, ease: "easeOut" },
+                            opacity: { duration: 0.8, delay: 0.3 }
+                          }}
+                        >
+                          {currentSlideData.text}
+                        </motion.div>
+                      ) : (
+                        /* Staggered Word Animation for Other Slides */
+                        <div
+                          className={`font-black leading-tight tracking-tight ${currentSlideData.textColor}`}
+                          style={{
+                            fontSize: aspect === '9:16' ? 'clamp(16px, 4vw, 28px)' : 'clamp(20px, 3vw, 32px)',
+                            lineHeight: aspect === '9:16' ? '1.3' : '1.2',
+                            textAlign: 'center',
+                            textWrap: 'balance'
+                          }}
+                        >
+                          {currentSlideData.text.split(' ').map((word, index) => (
+                            <motion.span
+                              key={index}
+                              className={`inline-block ${
+                                // Add extra spacing for longer words and punctuation
+                                word.length > 6 || /[.!?]/.test(word) ? 'mr-2' : 'mr-1'
+                              }`}
+                              style={{
+                                textShadow: '0 0 20px rgba(255,255,255,0.3), 0 4px 12px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.3)',
+                                WebkitTextStroke: '1px rgba(0,0,0,0.1)',
+                                filter: 'drop-shadow(0 0 15px rgba(255,255,255,0.2))'
+                              }}
+                              initial={{
+                                opacity: 0,
+                                y: 30,
+                                scale: 0.8,
+                                rotateX: -15
+                              }}
+                              animate={{
+                                opacity: 1,
+                                y: 0,
+                                scale: 1,
+                                rotateX: 0
+                              }}
+                              transition={{
+                                delay: 0.4 + (index * 0.06),
+                                duration: 0.7,
+                                ease: [0.16, 1, 0.3, 1]
+                              }}
+                            >
+                              {word}
+                            </motion.span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    {/* Enhanced CTA arrow for final slide */}
                     {currentSlide === 5 && (
-                      <motion.div 
+                      <motion.div
                         className="mt-8"
                         initial={{ opacity: 0, y: 20, scale: 0.8 }}
-                        animate={{ 
-                          opacity: 1, 
+                        animate={{
+                          opacity: 1,
                           y: [0, -10, 0],
                           scale: 1
                         }}
-                        transition={{ 
-                          delay: 1.5, 
-                          duration: 0.8, 
+                        transition={{
+                          delay: 1.5,
+                          duration: 0.8,
                           ease: "easeOut",
                           y: {
                             duration: 2,
@@ -368,10 +497,15 @@ const ScaleDMAutomation: React.FC = () => {
                           }
                         }}
                       >
-                        <div className="text-6xl animate-bounce">
+                        <div
+                          className="text-4xl md:text-6xl font-bold"
+                          style={{
+                            textShadow: '0 0 20px rgba(255,255,255,0.6), 0 4px 8px rgba(0,0,0,0.4)',
+                            filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.3))'
+                          }}
+                        >
                           ↓
                         </div>
-        
                       </motion.div>
                     )}
                     
