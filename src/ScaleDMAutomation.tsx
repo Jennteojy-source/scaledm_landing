@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const ScaleDMAutomation: React.FC = () => {
@@ -7,34 +7,34 @@ const ScaleDMAutomation: React.FC = () => {
   const [isPaused, setIsPaused] = useState(false);
   const [aspect, setAspect] = useState<'1:1' | '9:16'>('9:16');
 
-  // Framer Motion animation variants with proper typing
-  const slideVariants: Record<string, any> = {
+  // Memoized Framer Motion animation variants for better performance
+  const slideVariants = useMemo(() => ({
     slideInFromLeft: {
-      initial: { x: -200, opacity: 0, scale: 0.8 },
+      initial: { x: -150, opacity: 0, scale: 0.92 },
       animate: { x: 0, opacity: 1, scale: 1 },
-      exit: { x: 200, opacity: 0, scale: 0.8 }
+      exit: { x: 150, opacity: 0, scale: 1.05 }
     },
     slideInFromRight: {
-      initial: { x: 200, opacity: 0, scale: 0.8 },
+      initial: { x: 150, opacity: 0, scale: 0.92 },
       animate: { x: 0, opacity: 1, scale: 1 },
-      exit: { x: -200, opacity: 0, scale: 0.8 }
+      exit: { x: -150, opacity: 0, scale: 1.05 }
     },
     scaleInBounce: {
-      initial: { scale: 0.3, opacity: 0, rotate: -10 },
+      initial: { scale: 0.85, opacity: 0, rotate: -2 },
       animate: { scale: 1, opacity: 1, rotate: 0 },
-      exit: { scale: 0.3, opacity: 0, rotate: 10 }
+      exit: { scale: 0.85, opacity: 0, rotate: 2 }
     },
     fadeInUp: {
-      initial: { y: 100, opacity: 0, scale: 0.9 },
+      initial: { y: 60, opacity: 0, scale: 0.96 },
       animate: { y: 0, opacity: 1, scale: 1 },
-      exit: { y: -100, opacity: 0, scale: 0.9 }
+      exit: { y: -40, opacity: 0, scale: 1.02 }
     },
     typewriter: {
-      initial: { y: 50, opacity: 0, letterSpacing: '0.3em' },
+      initial: { y: 30, opacity: 0, letterSpacing: '0.1em' },
       animate: { y: 0, opacity: 1, letterSpacing: 'normal' },
-      exit: { y: -50, opacity: 0, letterSpacing: '0.3em' }
+      exit: { y: -20, opacity: 0, letterSpacing: '0.1em' }
     }
-  };
+  } as const), []);
 
   // (Slide 2 special per-line animation removed; using standard headline rendering)
 
@@ -58,7 +58,7 @@ const ScaleDMAutomation: React.FC = () => {
     },
     {
       id: 3,
-      text: "Want to set this up yourself? 100% free & setup in 30s",
+      text: "Set up this automation for yourself. Completely free",
       bgColor: "bg-gradient-to-br from-[#00D4FF] via-[#0ea5e9] to-[#0284c7]",
       textColor: "text-white",
       animation: "scaleInBounce",
@@ -82,7 +82,7 @@ const ScaleDMAutomation: React.FC = () => {
     },
     {
       id: 6,
-      text: "Join ScaleDM for free. Set up your comment-to-link solution in 30s",
+      text: "Start automating your engagement. Join ScaleDM for free",
       bgColor: "bg-gradient-to-br from-[#00D4FF] via-[#8B5CF6] to-[#00D4FF]",
       textColor: "text-white",
       animation: "typewriter",
@@ -90,75 +90,47 @@ const ScaleDMAutomation: React.FC = () => {
     }
   ];
 
+  // Simplified and optimized slide durations for better video ad performance
   const slideDurations = useMemo(() => {
-    const minDuration = 2;
-    const baseDuration = 2;
-    const perWordFactor = 0.18;
-    const maxDuration = 5.5;
-    const totalCap = 30;
+    const SLIDE_DURATIONS = {
+      1: 3.5, // Question slide
+      2: 4.0, // Explanation slide
+      3: 3.0, // Setup slide
+      4: 2.5, // Approval slide
+      5: 1.5, // Coverage slide
+      6: 4.0  // CTA slide
+    };
 
-    const computed = slides.map((slide) => {
-      const combined = [slide.subtitle, slide.text].filter(Boolean).join(' ');
-      const wordCount = combined.trim().split(/\s+/).filter(Boolean).length;
-      const raw = baseDuration + wordCount * perWordFactor;
-      const bounded = Math.min(maxDuration, Math.max(minDuration, raw));
-      return Number(bounded.toFixed(2));
-    });
-
-    const total = computed.reduce((sum, duration) => sum + duration, 0);
-    if (total <= totalCap) {
-      return computed;
-    }
-
-    const scale = totalCap / total;
-    const scaled = computed.map((duration) => {
-      const scaledValue = duration * scale;
-      return scaledValue < minDuration ? minDuration : scaledValue;
-    });
-
-    const scaledTotal = scaled.reduce((sum, duration) => sum + duration, 0);
-    if (scaledTotal <= totalCap) {
-      return scaled.map((duration) => Number(duration.toFixed(2)));
-    }
-
-    const excess = scaledTotal - totalCap;
-    const adjustableSum = scaled.reduce((sum, duration) => {
-      return duration > minDuration ? sum + (duration - minDuration) : sum;
-    }, 0);
-
-    if (adjustableSum === 0) {
-      return scaled.map((duration) => Number(duration.toFixed(2)));
-    }
-
-    const reductionFactor = excess / adjustableSum;
-    return scaled.map((duration) => {
-      if (duration <= minDuration) {
-        return Number(duration.toFixed(2));
-      }
-      const extra = duration - minDuration;
-      const adjusted = duration - extra * reductionFactor;
-      return Number(adjusted.toFixed(2));
-    });
+    return slides.map((slide) => SLIDE_DURATIONS[slide.id as keyof typeof SLIDE_DURATIONS] || 3.0);
   }, [slides]);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const interSlideGapSeconds = 0.8; // extra pause between slides
 
-  useEffect(() => {
+  // Memoized timer callback for better performance
+  const scheduleNextSlide = useCallback(() => {
     if (timerRef.current) {
       clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }
-
-    if (!isPlaying || isPaused) {
-      return;
     }
 
     const extraForSlide2 = currentSlide === 1 ? 0.5 : 0;
     const durationSeconds = (slideDurations[currentSlide] ?? 4) + interSlideGapSeconds + extraForSlide2;
+
     timerRef.current = setTimeout(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, durationSeconds * 1000);
+  }, [currentSlide, slideDurations, slides.length]);
+
+  useEffect(() => {
+    if (!isPlaying || isPaused) {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+      return;
+    }
+
+    scheduleNextSlide();
 
     return () => {
       if (timerRef.current) {
@@ -166,7 +138,7 @@ const ScaleDMAutomation: React.FC = () => {
         timerRef.current = null;
       }
     };
-  }, [isPlaying, isPaused, currentSlide, slideDurations, slides.length]);
+  }, [isPlaying, isPaused, scheduleNextSlide]);
 
   const handleStart = () => {
     setIsPlaying(true);
@@ -259,20 +231,26 @@ const ScaleDMAutomation: React.FC = () => {
         </div>
       </div>
 
-      {/* Video-like Fixed Container */}
-      <div className="w-full flex-1 flex items-center justify-center lg:items-start lg:pt-12" style={{ minHeight: '100vh' }}>
-        <div 
+      {/* Video-like Responsive Container */}
+      <div className="w-full flex-1 flex items-center justify-center lg:items-start lg:pt-12 px-4" style={{ minHeight: '100vh' }}>
+        <div
           className="video-container"
           style={{
-            width: aspect === '1:1' ? '600px' : '400px',
-            height: aspect === '1:1' ? '600px' : '711px',
+            width: aspect === '1:1' ?
+              'min(650px, calc(100vw - 2rem))' :
+              'min(420px, calc(100vw - 2rem))',
+            height: aspect === '1:1' ?
+              'min(650px, calc(100vw - 2rem))' :
+              'min(747px, calc(100vw * 1.78 - 2rem))',
             position: 'relative',
             overflow: 'hidden',
             backgroundColor: '#000',
-            borderRadius: '8px',
+            borderRadius: '12px',
             boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
             flexShrink: 0,
-            flexGrow: 0
+            flexGrow: 0,
+            maxWidth: '100%',
+            maxHeight: 'calc(100vh - 200px)'
           }}
         >
               {/* Smooth Framer Motion Animation Slide */}
@@ -290,11 +268,11 @@ const ScaleDMAutomation: React.FC = () => {
                   initial="initial"
                   animate="animate"
                   exit="exit"
-                  variants={slideVariants[currentSlideData.animation]}
+                  variants={slideVariants[currentSlideData.animation as keyof typeof slideVariants]}
                   transition={{
-                    duration: 1.2,
-                    ease: [0.25, 0.46, 0.45, 0.94],
-                    staggerChildren: 0.1
+                    duration: 1.0,
+                    ease: [0.16, 1, 0.3, 1],
+                    staggerChildren: 0.08
                   }}
                 >
                   {/* Animated background elements */}
@@ -337,7 +315,7 @@ const ScaleDMAutomation: React.FC = () => {
                     />
                   </div>
                   
-                  <div className="text-center px-8 relative z-10">
+                  <div className="text-center px-4 sm:px-6 relative z-10">
                     {/* Smooth Subtitle Animation */}
                     {currentSlideData.subtitle && (
                       <motion.div 
@@ -346,7 +324,7 @@ const ScaleDMAutomation: React.FC = () => {
                         animate={{ opacity: 0.9, y: 0 }}
                         transition={{ delay: 0.2, duration: 0.6, ease: "easeOut" }}
                       >
-                        <p className={`text-lg md:text-xl font-medium ${currentSlideData.textColor} tracking-wide`}>
+                        <p className={`text-base md:text-lg font-medium ${currentSlideData.textColor} tracking-wide`}>
                           {currentSlideData.subtitle}
                         </p>
                       </motion.div>
@@ -354,16 +332,16 @@ const ScaleDMAutomation: React.FC = () => {
                     
                     {/* Smooth Main Text Animation with balanced wrapping */}
                     <motion.h1 
-                      className={`text-2xl md:text-4xl lg:text-5xl font-black leading-[1.28] tracking-tight ${currentSlideData.textColor} max-w-[98%] md:max-w-[78%] mx-auto`}
+                      className={`text-xl md:text-2xl lg:text-3xl xl:text-4xl font-black leading-[1.2] tracking-tight ${currentSlideData.textColor} max-w-[95%] mx-auto`}
                       style={{
                         textShadow: '0 4px 8px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.2)',
                         textAlign: 'center',
                         textWrap: 'balance',
-                        fontSize: 'clamp(20px, 4.6vw, 46px)'
+                        fontSize: 'clamp(18px, 3.2vw, 36px)'
                       }}
                       initial="initial"
                       animate="animate"
-                      variants={slideVariants[currentSlideData.animation]}
+                      variants={slideVariants[currentSlideData.animation as keyof typeof slideVariants]}
                       transition={{ delay: 0.4, duration: 1.0, ease: "easeOut" }}
                     >
                       {currentSlideData.text}
