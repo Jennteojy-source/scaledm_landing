@@ -82,15 +82,7 @@ const ScaleDMAutomation: React.FC = () => {
     },
     {
       id: 5,
-      text: "We'll handle everything - from setup to monitoring. You just watch your engagement soar.",
-      bgColor: "bg-gradient-to-br from-[#8B5CF6] via-[#7c3aed] to-[#6d28d9]",
-      textColor: "text-white",
-      animation: "fadeInUp",
-      accent: "from-[#8B5CF6]"
-    },
-    {
-      id: 6,
-      text: "🚀 Start automating today. Join ScaleDM - FREE. No credit card required.",
+      text: "🚀 Ready to automate? Join ScaleDM FREE and watch your engagement soar",
       bgColor: "bg-gradient-to-br from-[#00D4FF] via-[#8B5CF6] to-[#00D4FF]",
       textColor: "text-white",
       animation: "typewriter",
@@ -106,8 +98,7 @@ const ScaleDMAutomation: React.FC = () => {
       2: 4.0, // Explanation slide - more detailed content
       3: 4.0, // Setup slide - compelling free offer
       4: 4.0, // Approval slide - trust building
-      5: 4.0, // Coverage slide - detailed benefits
-      6: 5.0  // CTA slide - elegant fade-in effect
+      5: 5.0  // CTA slide - elegant fade-in effect
     };
 
     return slides.map((slide) => SLIDE_DURATIONS[slide.id as keyof typeof SLIDE_DURATIONS] || 3.0);
@@ -403,7 +394,7 @@ const ScaleDMAutomation: React.FC = () => {
                   />
 
                   <div className="text-center px-6 sm:px-8 md:px-12 relative z-10">
-                    {/* Only show text content for slides 1-6, not slide 0 */}
+                    {/* Only show text content for slides 1-5, not slide 0 */}
                     {currentSlide > 0 && (
                       <>
                         {/* Enhanced Subtitle Animation */}
@@ -426,7 +417,7 @@ const ScaleDMAutomation: React.FC = () => {
 
                         {/* Dynamic Text Animation with Enhanced Styling */}
                         <div className="max-w-[90%] mx-auto">
-                          {currentSlide === 6 ? (
+                          {currentSlide === 5 ? (
                             /* Elegant Fade-in with Glow Effect for Final CTA */
                             <motion.div
                               className={`font-black tracking-tight ${currentSlideData.textColor}`}
@@ -505,7 +496,7 @@ const ScaleDMAutomation: React.FC = () => {
                       </>
                     )}
                     {/* Enhanced CTA arrow for final slide */}
-                    {currentSlide === 6 && (
+                    {currentSlide === 5 && (
                       <motion.div
                         className="mt-8"
                         initial={{ opacity: 0, y: 20, scale: 0.8 }}
