@@ -11,6 +11,8 @@ import InstagramPost4 from './InstagramPost4';
 import Instagram5 from './Instagram5';
 import CarouselAds from './CarouselAds';
 import ScaleDMAutomation from './ScaleDMAutomation';
+import ManyChatComparison from './ManyChatComparison';
+import ManyChatComparisonV2 from './ManyChatComparisonV2';
 
 const NavigationHeader: React.FC = () => {
   const location = useLocation();
@@ -26,7 +28,9 @@ const NavigationHeader: React.FC = () => {
     { path: '/ig-post-3', label: 'IG3' },
     { path: '/ig-post-4', label: 'IG4' },
     { path: '/ig-post-5', label: 'IG5' },
-    { path: '/scaledm-automation', label: 'Auto' }
+    { path: '/scaledm-automation', label: 'Auto' },
+    { path: '/manychat-comparison', label: 'ManyChat' },
+    { path: '/manychat-comparison-v2', label: 'ManyChatV2' }
   ];
 
   return (
@@ -94,6 +98,8 @@ const App: React.FC = () => {
           <Route path="/ig-post-4" element={<InstagramPost4 />} />
           <Route path="/ig-post-5" element={<Instagram5 />} />
           <Route path="/scaledm-automation" element={<ScaleDMAutomation />} />
+          <Route path="/manychat-comparison" element={<ManyChatComparison />} />
+          <Route path="/manychat-comparison-v2" element={<ManyChatComparisonV2 />} />
         </Routes>
       </div>
     </Router>
