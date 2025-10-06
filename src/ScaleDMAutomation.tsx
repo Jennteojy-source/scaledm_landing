@@ -28,7 +28,7 @@ const ScaleDMAutomation: React.FC = () => {
     },
     {
       id: 1,
-      text: "Why do IG creators ask you to comment? Your comment triggers an instant DM with the link.",
+      text: "Why do creators ask you to comment a keyword? Your comment auto-triggers a DM with the link",
       bgColor: "bg-gradient-to-br from-[#00D4FF] via-[#0ea5e9] to-[#0284c7]",
       textColor: "text-white",
       animation: "slideInFromLeft",
@@ -36,7 +36,7 @@ const ScaleDMAutomation: React.FC = () => {
     },
     {
       id: 2,
-      text: "They use comment-to-DM automation. More conversions → link lands in inbox. More reach → algorithm boosts the post.",
+      text: "🤖 Comment-to-DM automation\n\n📩 More conversions → link in inbox\n\n📈 More engagement → more reach",
       subtitle: "",
       bgColor: "bg-gradient-to-br from-[#8B5CF6] via-[#7c3aed] to-[#6d28d9]",
       textColor: "text-white",
@@ -45,7 +45,7 @@ const ScaleDMAutomation: React.FC = () => {
     },
     {
       id: 3,
-      text: "Set up your own comment-to-DM in 30s — free with ScaleDM",
+      text: "Set up your own comment-to-DM automation in 30s — free with ScaleDM",
       bgColor: "bg-gradient-to-br from-[#00D4FF] via-[#0ea5e9] to-[#0284c7]",
       textColor: "text-white",
       animation: "scaleInBounce",
@@ -58,8 +58,8 @@ const ScaleDMAutomation: React.FC = () => {
   const slideDurations = useMemo(() => {
     const SLIDE_DURATIONS = {
       0: 1.0, // Empty intro slide
-      1: 4.0, // Question slide - longer for engagement
-      2: 4.0, // Explanation slide - more detailed content
+      1: 5.0, // Question slide - longer for engagement
+      2: 5.0, // Explanation slide - more detailed content
       3: 5.0  // Combined setup + CTA slide
     };
 
@@ -362,52 +362,78 @@ const ScaleDMAutomation: React.FC = () => {
                           </motion.div>
                         )}
                         {currentSlide === slides.length - 1 ? (
-                          <motion.div
+                          <div
                             className={`font-black tracking-tight ${currentSlideData.textColor}`}
                             style={{
-                              fontSize: aspect === '9:16' ? 'clamp(18px, 4.5vw, 32px)' : 'clamp(22px, 3.5vw, 36px)',
-                              lineHeight: aspect === '9:16' ? '1.3' : '1.2',
+                              fontSize: aspect === '9:16' ? 'clamp(16px, 4vw, 28px)' : 'clamp(20px, 3vw, 32px)',
+                              lineHeight: aspect === '9:16' ? '1.35' : '1.25',
                               textAlign: 'center'
                             }}
-                            initial={{ opacity: 0, y: 30, scale: 0.9 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
                           >
-                            {/* Two-line emphasis for stronger ad cadence */}
-                            <span>{currentSlideData.text.split('Ready to Scale')[0]}</span>
-                            <br />
-                            <span className="inline-block bg-white/15 px-2 py-1 rounded-md">
-                              Ready to Scale?
-                            </span>
-                            {/* subtle shimmer underline */}
-                            <motion.div
-                              initial={{ scaleX: 0, opacity: 0 }}
-                              animate={{ scaleX: 1, opacity: 1 }}
-                              transition={{ delay: 0.6, duration: 0.8, ease: 'easeOut' }}
-                              className="mx-auto mt-3 h-1 w-1/2 rounded-full bg-gradient-to-r from-white/20 via-white/60 to-white/20"
-                              style={{ transformOrigin: 'left' }}
-                            />
-                          </motion.div>
+                            {currentSlideData.text.includes('\n') ? (
+                              currentSlideData.text.split('\n').filter(Boolean).map((line, li) => (
+                                <motion.div
+                                  key={`line-${li}`}
+                                  className="mb-2 px-1 mx-auto max-w-[88%] sm:max-w-[80%]"
+                                  initial={{ opacity: 0, y: 20 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ delay: 0.25 + li * 0.25, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                                >
+                                  {line}
+                                </motion.div>
+                              ))
+                            ) : (
+                              <div className="mx-auto max-w-[88%] sm:max-w-[80%]">
+                                {currentSlideData.text.split(' ').map((word, wi) => (
+                                  <motion.span
+                                    key={`${currentSlide}-${wi}`}
+                                    className={word.length > 6 || /[.!?]/.test(word) ? 'inline-block mr-2' : 'inline-block mr-1'}
+                                    initial={{ opacity: 0, y: 24 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.3 + wi * 0.06, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                                  >
+                                    {word}
+                                  </motion.span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
                         ) : (
                           <div
-                            className={`font-black leading-tight tracking-tight ${currentSlideData.textColor}`}
+                            className={`font-black tracking-tight ${currentSlideData.textColor}`}
                             style={{
                               fontSize: aspect === '9:16' ? 'clamp(16px, 4vw, 28px)' : 'clamp(20px, 3vw, 32px)',
-                              lineHeight: aspect === '9:16' ? '1.3' : '1.2',
+                              lineHeight: aspect === '9:16' ? '1.35' : '1.25',
                               textAlign: 'center'
                             }}
                           >
-                            {currentSlideData.text.split(' ').map((word, wi) => (
-                              <motion.span
-                                key={`${currentSlide}-${wi}`}
-                                className={word.length > 6 || /[.!?]/.test(word) ? 'inline-block mr-2' : 'inline-block mr-1'}
-                                initial={{ opacity: 0, y: 24 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.3 + wi * 0.06, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                              >
-                                {word}
-                              </motion.span>
-                            ))}
+                            {currentSlideData.text.includes('\n') ? (
+                              // Animate line by line when explicit line breaks are present
+                              currentSlideData.text.split('\n').filter(Boolean).map((line, li) => (
+                                <motion.div
+                                  key={`line-${li}`}
+                                  className="mb-2 px-1"
+                                  initial={{ opacity: 0, y: 20 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ delay: 0.25 + li * 0.25, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                                >
+                                  {line}
+                                </motion.div>
+                              ))
+                            ) : (
+                              // Fallback: word-by-word animation
+                              currentSlideData.text.split(' ').map((word, wi) => (
+                                <motion.span
+                                  key={`${currentSlide}-${wi}`}
+                                  className={word.length > 6 || /[.!?]/.test(word) ? 'inline-block mr-2' : 'inline-block mr-1'}
+                                  initial={{ opacity: 0, y: 24 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ delay: 0.3 + wi * 0.06, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                                >
+                                  {word}
+                                </motion.span>
+                              ))
+                            )}
                           </div>
                         )}
                       </>
