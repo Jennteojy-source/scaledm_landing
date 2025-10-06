@@ -7,32 +7,11 @@ const ScaleDMAutomation: React.FC = () => {
   const [isPaused, setIsPaused] = useState(false);
   const [aspect, setAspect] = useState<'1:1' | '9:16'>('9:16');
 
-  // Memoized Framer Motion animation variants for better performance
-  const slideVariants = useMemo(() => ({
-    slideInFromLeft: {
-      initial: { x: -150, opacity: 0, scale: 0.92 },
-      animate: { x: 0, opacity: 1, scale: 1 },
-      exit: { x: 150, opacity: 0, scale: 1.05 }
-    },
-    slideInFromRight: {
-      initial: { x: 150, opacity: 0, scale: 0.92 },
-      animate: { x: 0, opacity: 1, scale: 1 },
-      exit: { x: -150, opacity: 0, scale: 1.05 }
-    },
-    scaleInBounce: {
-      initial: { scale: 0.85, opacity: 0, rotate: -2 },
-      animate: { scale: 1, opacity: 1, rotate: 0 },
-      exit: { scale: 0.85, opacity: 0, rotate: 2 }
-    },
+  // Variants kept for text elements only (no slide transitions)
+  const textVariants = useMemo(() => ({
     fadeInUp: {
-      initial: { y: 60, opacity: 0, scale: 0.96 },
-      animate: { y: 0, opacity: 1, scale: 1 },
-      exit: { y: -40, opacity: 0, scale: 1.02 }
-    },
-    typewriter: {
-      initial: { y: 30, opacity: 0, letterSpacing: '0.1em' },
-      animate: { y: 0, opacity: 1, letterSpacing: 'normal' },
-      exit: { y: -20, opacity: 0, letterSpacing: '0.1em' }
+      initial: { y: 30, opacity: 0 },
+      animate: { y: 0, opacity: 1 }
     }
   } as const), []);
 
@@ -49,7 +28,7 @@ const ScaleDMAutomation: React.FC = () => {
     },
     {
       id: 1,
-      text: "Ever wonder why IG creators ask you to comment keywords for links? 🤔",
+      text: "Why do IG creators ask you to comment? Your comment triggers an instant DM with the link.",
       bgColor: "bg-gradient-to-br from-[#00D4FF] via-[#0ea5e9] to-[#0284c7]",
       textColor: "text-white",
       animation: "slideInFromLeft",
@@ -57,8 +36,8 @@ const ScaleDMAutomation: React.FC = () => {
     },
     {
       id: 2,
-      text: "This simple trick drives massive engagement and tells Instagram's algorithm to show their content to MORE people",
-      subtitle: "Smart creators know the secret to viral growth",
+      text: "They use comment-to-DM automation. More conversions → link lands in inbox. More reach → algorithm boosts the post.",
+      subtitle: "",
       bgColor: "bg-gradient-to-br from-[#8B5CF6] via-[#7c3aed] to-[#6d28d9]",
       textColor: "text-white",
       animation: "slideInFromRight",
@@ -66,28 +45,13 @@ const ScaleDMAutomation: React.FC = () => {
     },
     {
       id: 3,
-      text: "Now YOU can set up this exact automation. 100% FREE. No catches. No limits.",
+      text: "Set up your own comment-to-DM in 30s — free with ScaleDM",
       bgColor: "bg-gradient-to-br from-[#00D4FF] via-[#0ea5e9] to-[#0284c7]",
       textColor: "text-white",
       animation: "scaleInBounce",
       accent: "from-[#00D4FF]"
     },
-    {
-      id: 4,
-      text: "✅ Meta approved and Instagram compliant - completely safe to use",
-      bgColor: "bg-gradient-to-br from-[#1877f2] via-[#42a5f5] to-[#1e40af]",
-      textColor: "text-white",
-      animation: "scaleInBounce",
-      accent: "from-[#1877f2]"
-    },
-    {
-      id: 5,
-      text: "🚀 Ready to automate? Join ScaleDM FREE and watch your engagement soar",
-      bgColor: "bg-gradient-to-br from-[#00D4FF] via-[#8B5CF6] to-[#00D4FF]",
-      textColor: "text-white",
-      animation: "typewriter",
-      accent: "from-[#00D4FF]"
-    }
+    
   ], []);
 
   // Optimized slide durations for enhanced content
@@ -96,16 +60,14 @@ const ScaleDMAutomation: React.FC = () => {
       0: 1.0, // Empty intro slide
       1: 4.0, // Question slide - longer for engagement
       2: 4.0, // Explanation slide - more detailed content
-      3: 4.0, // Setup slide - compelling free offer
-      4: 4.0, // Approval slide - trust building
-      5: 5.0  // CTA slide - elegant fade-in effect
+      3: 5.0  // Combined setup + CTA slide
     };
 
     return slides.map((slide) => SLIDE_DURATIONS[slide.id as keyof typeof SLIDE_DURATIONS] || 3.0);
   }, [slides]);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const interSlideGapSeconds = 0.8; // extra pause between slides
+  const interSlideGapSeconds = 0.8; // slight pause between content changes
 
   // Memoized timer callback for better performance
   const scheduleNextSlide = useCallback(() => {
@@ -221,7 +183,7 @@ const ScaleDMAutomation: React.FC = () => {
         </div>
       </div>
 
-      {/* Slide Counter */}
+      {/* Progress Dots (optional visual cue) */}
       <div className="w-full flex items-center justify-center pt-2">
         <div className="flex items-center gap-2">
           {slides.map((_, index) => (
@@ -259,28 +221,18 @@ const ScaleDMAutomation: React.FC = () => {
             maxHeight: 'calc(100vh - 200px)'
           }}
         >
-              {/* Smooth Framer Motion Animation Slide */}
-              <AnimatePresence mode="wait">
-                <motion.div 
-                  key={currentSlide}
-                  className={`absolute inset-0 ${currentSlideData.bgColor} overflow-hidden`}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                  initial="initial"
-                  animate="animate"
-                  exit="exit"
-                  variants={slideVariants[currentSlideData.animation as keyof typeof slideVariants]}
-                  transition={{
-                    duration: 1.0,
-                    ease: [0.16, 1, 0.3, 1],
-                    staggerChildren: 0.08
-                  }}
-                >
+              {/* Single continuous slide (fixed background, no slide transitions) */}
+              <div 
+                className={`absolute inset-0 bg-gradient-to-br from-[#00D4FF] via-[#0ea5e9] to-[#0284c7] overflow-hidden`}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                  {/* Top-of-slide space preserved after toast removal */}
                   {/* Enhanced animated background elements */}
                   <div className="absolute inset-0 overflow-hidden">
                     <motion.div
@@ -394,116 +346,81 @@ const ScaleDMAutomation: React.FC = () => {
                   />
 
                   <div className="text-center px-6 sm:px-8 md:px-12 relative z-10">
-                    {/* Only show text content for slides 1-5, not slide 0 */}
+                    {/* Render only current slide's text; no slide transitions */}
                     {currentSlide > 0 && (
                       <>
-                        {/* Enhanced Subtitle Animation */}
                         {currentSlideData.subtitle && (
                           <motion.div
                             className="mb-6"
-                            initial={{ opacity: 0, y: 30 }}
+                            initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 0.9, y: 0 }}
-                            transition={{ delay: 0.2, duration: 0.6, ease: "easeOut" }}
+                            transition={{ duration: 0.6, ease: 'easeOut' }}
                           >
-                            <p className={`text-lg md:text-xl font-semibold ${currentSlideData.textColor} tracking-wider leading-relaxed`}
-                               style={{
-                                 textShadow: '0 2px 8px rgba(0,0,0,0.4), 0 1px 3px rgba(0,0,0,0.3)',
-                                 filter: 'drop-shadow(0 0 10px rgba(255,255,255,0.2))'
-                               }}>
+                            <p className={`text-lg md:text-xl font-semibold ${currentSlideData.textColor} tracking-wider leading-relaxed`}>
                               {currentSlideData.subtitle}
                             </p>
                           </motion.div>
                         )}
-
-                        {/* Dynamic Text Animation with Enhanced Styling */}
-                        <div className="max-w-[90%] mx-auto">
-                          {currentSlide === 5 ? (
-                            /* Elegant Fade-in with Glow Effect for Final CTA */
+                        {currentSlide === slides.length - 1 ? (
+                          <motion.div
+                            className={`font-black tracking-tight ${currentSlideData.textColor}`}
+                            style={{
+                              fontSize: aspect === '9:16' ? 'clamp(18px, 4.5vw, 32px)' : 'clamp(22px, 3.5vw, 36px)',
+                              lineHeight: aspect === '9:16' ? '1.3' : '1.2',
+                              textAlign: 'center'
+                            }}
+                            initial={{ opacity: 0, y: 30, scale: 0.9 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
+                          >
+                            {/* Two-line emphasis for stronger ad cadence */}
+                            <span>{currentSlideData.text.split('Ready to Scale')[0]}</span>
+                            <br />
+                            <span className="inline-block bg-white/15 px-2 py-1 rounded-md">
+                              Ready to Scale?
+                            </span>
+                            {/* subtle shimmer underline */}
                             <motion.div
-                              className={`font-black tracking-tight ${currentSlideData.textColor}`}
-                              style={{
-                                fontSize: aspect === '9:16' ? 'clamp(18px, 4.5vw, 32px)' : 'clamp(22px, 3.5vw, 36px)',
-                                lineHeight: aspect === '9:16' ? '1.3' : '1.2',
-                                textAlign: 'center',
-                                textShadow: '0 0 25px rgba(255,255,255,0.4), 0 4px 12px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.3)',
-                                WebkitTextStroke: '1px rgba(0,0,0,0.15)',
-                                filter: 'drop-shadow(0 0 20px rgba(255,255,255,0.3))'
-                              }}
-                              initial={{
-                                opacity: 0,
-                                y: 30,
-                                scale: 0.9
-                              }}
-                              animate={{
-                                opacity: 1,
-                                y: 0,
-                                scale: 1
-                              }}
-                              transition={{
-                                duration: 1.2,
-                                ease: [0.16, 1, 0.3, 1]
-                              }}
-                            >
-                              {currentSlideData.text}
-                            </motion.div>
-                          ) : (
-                            /* Staggered Word Animation for Other Slides */
-                            <div
-                              className={`font-black leading-tight tracking-tight ${currentSlideData.textColor}`}
-                              style={{
-                                fontSize: aspect === '9:16' ? 'clamp(16px, 4vw, 28px)' : 'clamp(20px, 3vw, 32px)',
-                                lineHeight: aspect === '9:16' ? '1.3' : '1.2',
-                                textAlign: 'center',
-                                textWrap: 'balance'
-                              }}
-                            >
-                              {currentSlideData.text.split(' ').map((word, index) => (
-                                <motion.span
-                                  key={index}
-                                  className={`inline-block ${
-                                    // Add extra spacing for longer words and punctuation
-                                    word.length > 6 || /[.!?]/.test(word) ? 'mr-2' : 'mr-1'
-                                  }`}
-                                  style={{
-                                    textShadow: '0 0 20px rgba(255,255,255,0.3), 0 4px 12px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.3)',
-                                    WebkitTextStroke: '1px rgba(0,0,0,0.1)',
-                                    filter: 'drop-shadow(0 0 15px rgba(255,255,255,0.2))'
-                                  }}
-                                  initial={{
-                                    opacity: 0,
-                                    y: 30,
-                                    scale: 0.8,
-                                    rotateX: -15
-                                  }}
-                                  animate={{
-                                    opacity: 1,
-                                    y: 0,
-                                    scale: 1,
-                                    rotateX: 0
-                                  }}
-                                  transition={{
-                                    delay: 0.4 + (index * 0.06),
-                                    duration: 0.7,
-                                    ease: [0.16, 1, 0.3, 1]
-                                  }}
-                                >
-                                  {word}
-                                </motion.span>
-                              ))}
-                            </div>
-                          )}
-                        </div>
+                              initial={{ scaleX: 0, opacity: 0 }}
+                              animate={{ scaleX: 1, opacity: 1 }}
+                              transition={{ delay: 0.6, duration: 0.8, ease: 'easeOut' }}
+                              className="mx-auto mt-3 h-1 w-1/2 rounded-full bg-gradient-to-r from-white/20 via-white/60 to-white/20"
+                              style={{ transformOrigin: 'left' }}
+                            />
+                          </motion.div>
+                        ) : (
+                          <div
+                            className={`font-black leading-tight tracking-tight ${currentSlideData.textColor}`}
+                            style={{
+                              fontSize: aspect === '9:16' ? 'clamp(16px, 4vw, 28px)' : 'clamp(20px, 3vw, 32px)',
+                              lineHeight: aspect === '9:16' ? '1.3' : '1.2',
+                              textAlign: 'center'
+                            }}
+                          >
+                            {currentSlideData.text.split(' ').map((word, wi) => (
+                              <motion.span
+                                key={`${currentSlide}-${wi}`}
+                                className={word.length > 6 || /[.!?]/.test(word) ? 'inline-block mr-2' : 'inline-block mr-1'}
+                                initial={{ opacity: 0, y: 24 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.3 + wi * 0.06, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                              >
+                                {word}
+                              </motion.span>
+                            ))}
+                          </div>
+                        )}
                       </>
                     )}
                     {/* Enhanced CTA arrow for final slide */}
-                    {currentSlide === 5 && (
+                    {currentSlide >= slides.length - 1 && (
                       <motion.div
                         className="mt-8"
-                        initial={{ opacity: 0, y: 20, scale: 0.8 }}
+                        initial={{ opacity: 0, y: 20, scale: 0.9 }}
                         animate={{
                           opacity: 1,
                           y: [0, -10, 0],
-                          scale: 1
+                          scale: [1, 1.04, 1]
                         }}
                         transition={{
                           delay: 1.5,
@@ -513,6 +430,11 @@ const ScaleDMAutomation: React.FC = () => {
                             duration: 2,
                             repeat: Infinity,
                             ease: "easeInOut"
+                          },
+                          scale: {
+                            duration: 1.6,
+                            repeat: Infinity,
+                            ease: 'easeInOut'
                           }
                         }}
                       >
@@ -566,8 +488,7 @@ const ScaleDMAutomation: React.FC = () => {
                       }}
                     />
                   </div>
-                </motion.div>
-              </AnimatePresence>
+              </div>
         </div>
       </div>
 
